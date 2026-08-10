@@ -14,7 +14,10 @@ class FaqController extends Controller
         $query = Faq::with('category');
 
         if ($request->filled('faq_category_id')) {
-            $query->where('faq_category_id', $request->faq_category_id);
+            $catName = FaqCategory::where('id', $request->faq_category_id)->value('name');
+            if ($catName) {
+                $query->where('category', $catName);
+            }
         }
 
         $faqs = $query->latest()->paginate(15)->withQueryString();
@@ -38,6 +41,11 @@ class FaqController extends Controller
             'status' => 'required|in:active,inactive',
         ]);
 
+        $cat = FaqCategory::findOrFail($data['faq_category_id']);
+        $data['category'] = $cat->name;
+        $data['status'] = $data['status'] === 'active';
+        unset($data['faq_category_id']);
+
         Faq::create($data);
 
         return redirect()->route('admin.faqs.index')->with('success', 'FAQ question created successfully!');
@@ -60,6 +68,11 @@ class FaqController extends Controller
             'answer' => 'required|string',
             'status' => 'required|in:active,inactive',
         ]);
+
+        $cat = FaqCategory::findOrFail($data['faq_category_id']);
+        $data['category'] = $cat->name;
+        $data['status'] = $data['status'] === 'active';
+        unset($data['faq_category_id']);
 
         $faq->update($data);
 

@@ -21,16 +21,24 @@ class DatabaseSeeder extends Seeder
             FAQCategorySeeder::class,
             AboutPageSeeder::class,
             ContactSettingSeeder::class,
+            CategorySeeder::class,
+            CategoryHierarchySeeder::class,
             ProductSeeder::class,
+            UpdateProductsCategorySeeder::class,
             ProductImageSeeder::class,
             WishlistSeeder::class,
         ]);
 
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name' => 'Test User',
+                'role' => 'customer',
+                'status' => 'active',
+                'password' => bcrypt('password'),
+            ]
+        );
     }
 }

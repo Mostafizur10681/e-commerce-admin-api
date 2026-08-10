@@ -13,9 +13,10 @@ class ChatController extends Controller
     public function index(Request $request)
     {
         // Group chats by session_id or user_id
-        $sessions = ChatMessage::select('session_id', 'user_id', 'sender_name', 'sender_email')
+        $sessions = ChatMessage::with('user')
+            ->select('session_id', 'user_id')
             ->selectRaw('MAX(created_at) as last_message_at, COUNT(*) as total_messages')
-            ->groupBy('session_id', 'user_id', 'sender_name', 'sender_email')
+            ->groupBy('session_id', 'user_id')
             ->orderByDesc('last_message_at')
             ->get();
 
@@ -24,6 +25,7 @@ class ChatController extends Controller
         $messages = [];
         if ($activeSessionId) {
             $messages = ChatMessage::where('session_id', $activeSessionId)->oldest()->get();
+            ChatMessage::where('session_id', $activeSessionId)->where('sender', 'user')->update(['is_read' => true]);
         }
 
         return view('admin.chats.index', compact('sessions', 'activeSessionId', 'messages'));
@@ -37,13 +39,13 @@ class ChatController extends Controller
         ]);
 
         $admin = Auth::user();
+        $userId = ChatMessage::where('session_id', $data['session_id'])->whereNotNull('user_id')->value('user_id');
 
         ChatMessage::create([
             'session_id' => $data['session_id'],
-            'user_id' => $admin->id,
-            'sender_type' => 'admin',
-            'sender_name' => $admin->name,
-            'sender_email' => $admin->email,
+            'user_id' => $userId,
+            'admin_id' => $admin ? $admin->id : null,
+            'sender' => 'admin',
             'message' => $data['message'],
             'is_read' => true,
         ]);

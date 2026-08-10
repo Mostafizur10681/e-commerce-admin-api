@@ -41,7 +41,7 @@ class CategoryController extends Controller
         ]);
 
         $data['slug'] = Str::slug($data['name']);
-        $data['is_active'] = $request->has('is_active') ? true : false;
+        $data['status'] = $request->has('is_active') ? true : false;
 
         if ($request->hasFile('image')) {
             $data['image'] = $this->uploadImage($request->file('image'), 'categories');
@@ -70,7 +70,7 @@ class CategoryController extends Controller
         ]);
 
         $data['slug'] = Str::slug($data['name']);
-        $data['is_active'] = $request->has('is_active') ? true : false;
+        $data['status'] = $request->has('is_active') ? true : false;
 
         if ($request->hasFile('image')) {
             if ($category->image) {

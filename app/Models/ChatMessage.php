@@ -15,6 +15,11 @@ class ChatMessage extends Model
         'is_read',
     ];
 
+    public function getSenderTypeAttribute()
+    {
+        return $this->sender;
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');

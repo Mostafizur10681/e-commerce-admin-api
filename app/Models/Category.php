@@ -54,4 +54,14 @@ class Category extends Model
     {
         return $this->hasMany(SubCategory::class, 'category_id');
     }
+
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class, 'category_id');
+    }
+
+    public function getIsActiveAttribute(): bool
+    {
+        return (bool) ($this->status ?? true);
+    }
 }

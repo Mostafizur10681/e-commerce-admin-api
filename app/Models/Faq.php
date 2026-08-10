@@ -32,4 +32,19 @@ class Faq extends Model
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
     }
+
+    public function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(FAQCategory::class, 'category', 'name');
+    }
+
+    public function faqCategory(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(FAQCategory::class, 'category', 'name');
+    }
+
+    public function getFaqCategoryIdAttribute()
+    {
+        return $this->category?->id;
+    }
 }

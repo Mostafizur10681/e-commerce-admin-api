@@ -51,44 +51,65 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'Admin user created successfully!');
     }
 
+    public function updateStatus(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        $status = $request->input('status', 'active');
+        if (in_array($status, ['active', 'pending', 'blocked'])) {
+            $user->status = $status;
+            $user->save();
+        }
+
+        if ($request->isMethod('get')) {
+            return redirect()->route('admin.users.index')->with('success', 'User status updated to ' . $user->status);
+        }
+
+        return back()->with('success', 'User status updated to ' . $user->status);
+    }
+
     public function approve($id)
     {
-        $user = User::where('role', 'admin')->findOrFail($id);
+        $user = User::findOrFail($id);
         $user->status = 'active';
         $user->save();
 
-        return back()->with('success', 'Administrator account approved!');
+        return back()->with('success', 'User account approved!');
     }
 
     public function reject($id)
     {
-        $user = User::where('role', 'admin')->findOrFail($id);
+        $user = User::findOrFail($id);
         $user->status = 'blocked';
         $user->save();
 
-        return back()->with('success', 'Administrator account rejected and blocked.');
+        return back()->with('success', 'User account rejected and blocked.');
     }
 
     public function toggleBlock($id)
     {
-        $user = User::where('role', 'admin')->findOrFail($id);
+        $user = User::findOrFail($id);
         $user->status = $user->status === 'blocked' ? 'active' : 'blocked';
         $user->save();
 
-        return back()->with('success', 'Admin status updated to ' . $user->status);
+        return back()->with('success', 'User status updated to ' . $user->status);
     }
 
     public function destroy($id)
     {
-        $user = User::where('role', 'admin')->findOrFail($id);
+        $user = User::findOrFail($id);
         
         if ($user->id === auth()->id()) {
-            return back()->with('error', 'You cannot delete your own logged-in admin account.');
+            return back()->with('error', 'You cannot delete your own logged-in account.');
         }
 
-        $user->adminProfile()->delete();
+        if ($user->adminProfile) {
+            $user->adminProfile->delete();
+        }
+        if ($user->customerProfile) {
+            $user->customerProfile->delete();
+        }
         $user->delete();
 
-        return redirect()->route('admin.users.index')->with('success', 'Admin user deleted successfully!');
+        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully!');
     }
 }

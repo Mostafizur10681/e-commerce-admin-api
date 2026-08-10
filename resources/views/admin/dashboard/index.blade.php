@@ -6,12 +6,12 @@
     <!-- Page Header -->
     <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-            <h1 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">E-commerce Dashboard</h1>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Welcome back! Here is an overview of your store's live performance.</p>
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">E-commerce Dashboard</h1>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Welcome back! Here is an overview of your store's live performance and transactions.</p>
         </div>
         <div class="flex items-center gap-2">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-green-50 dark:bg-green-950/40 text-primary border border-green-200 dark:border-green-800 text-xs font-bold">
-                <span class="h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80 text-xs font-bold shadow-sm">
+                <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 Live System
             </span>
         </div>
@@ -81,10 +81,15 @@
     <!-- 3 Analytics Charts -->
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <!-- Revenue Overview -->
-        <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 shadow-sm">
-            <div class="mb-4">
-                <h3 class="text-sm font-bold text-gray-900 dark:text-white">Revenue Overview</h3>
-                <p class="text-xs text-gray-500 dark:text-gray-400">Monthly income vs expenditure trend</p>
+        <div class="card-hover-effect bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900 dark:text-white">Revenue Overview</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Monthly income vs expenditure trend</p>
+                </div>
+                <span class="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                </span>
             </div>
             <div class="h-60">
                 <canvas id="revenueChart"></canvas>
@@ -92,10 +97,15 @@
         </div>
 
         <!-- Sales Analytics -->
-        <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 shadow-sm">
-            <div class="mb-4">
-                <h3 class="text-sm font-bold text-gray-900 dark:text-white">Sales Analytics</h3>
-                <p class="text-xs text-gray-500 dark:text-gray-400">Weekly sales volume breakdown</p>
+        <div class="card-hover-effect bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900 dark:text-white">Sales Analytics</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Weekly sales volume breakdown</p>
+                </div>
+                <span class="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                </span>
             </div>
             <div class="h-60">
                 <canvas id="salesChart"></canvas>
@@ -103,10 +113,15 @@
         </div>
 
         <!-- Orders Trend -->
-        <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 shadow-sm">
-            <div class="mb-4">
-                <h3 class="text-sm font-bold text-gray-900 dark:text-white">Orders Trend</h3>
-                <p class="text-xs text-gray-500 dark:text-gray-400">Transaction counts progression</p>
+        <div class="card-hover-effect bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900 dark:text-white">Orders Trend</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Transaction counts progression</p>
+                </div>
+                <span class="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" /></svg>
+                </span>
             </div>
             <div class="h-60">
                 <canvas id="ordersTrendChart"></canvas>
@@ -117,64 +132,64 @@
     <!-- Bottom Section: Recent Orders & Top Selling Products -->
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <!-- Recent Orders Table -->
-        <div class="lg:col-span-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden">
-            <div class="p-5 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+        <div class="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
                 <div>
-                    <h3 class="text-sm font-bold text-gray-900 dark:text-white">Recent Orders</h3>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Latest transactions placed in store</p>
+                    <h3 class="text-sm font-bold text-slate-900 dark:text-white">Recent Orders</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Latest transactions placed in store</p>
                 </div>
-                <a href="{{ route('admin.orders.index') }}" class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
+                <a href="{{ route('admin.orders.index') }}" class="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1">
                     View All Orders
                     <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                 </a>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs">
-                    <thead class="bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400 uppercase tracking-wider text-[10px]">
+                    <thead class="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 uppercase tracking-wider text-[10px]">
                         <tr>
-                            <th class="px-5 py-3">Order Number</th>
-                            <th class="px-5 py-3">Customer</th>
-                            <th class="px-5 py-3">Amount</th>
-                            <th class="px-5 py-3">Status</th>
-                            <th class="px-5 py-3 text-right">Date</th>
+                            <th class="px-5 py-3.5">Order Number</th>
+                            <th class="px-5 py-3.5">Customer</th>
+                            <th class="px-5 py-3.5">Amount</th>
+                            <th class="px-5 py-3.5">Status</th>
+                            <th class="px-5 py-3.5 text-right">Date</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
                         @forelse($recentOrders as $order)
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
-                                <td class="px-5 py-3.5 font-bold text-gray-900 dark:text-white">
-                                    <a href="{{ route('admin.orders.show', $order->id) }}" class="text-primary hover:underline font-mono">
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                <td class="px-5 py-3.5 font-bold text-slate-900 dark:text-white">
+                                    <a href="{{ route('admin.orders.show', $order->id) }}" class="text-emerald-600 dark:text-emerald-400 hover:underline font-mono">
                                         #{{ $order->order_number }}
                                     </a>
                                 </td>
-                                <td class="px-5 py-3.5 font-medium text-gray-700 dark:text-gray-300">
+                                <td class="px-5 py-3.5 font-medium text-slate-700 dark:text-slate-300">
                                     {{ $order->customer_name ?: ($order->user->name ?? 'Guest') }}
                                 </td>
-                                <td class="px-5 py-3.5 font-bold text-gray-900 dark:text-white">
+                                <td class="px-5 py-3.5 font-bold text-slate-900 dark:text-white">
                                     ৳{{ number_format($order->total, 2) }}
                                 </td>
                                 <td class="px-5 py-3.5">
                                     @php
                                         $s = strtolower($order->status);
                                         $badgeClasses = match($s) {
-                                            'delivered', 'completed' => 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400',
-                                            'shipped', 'out-for-delivery' => 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-400',
-                                            'processing' => 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400',
-                                            'cancelled' => 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400',
-                                            default => 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-300',
+                                            'delivered', 'completed' => 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-400 dark:border-emerald-800',
+                                            'shipped', 'out-for-delivery' => 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-400 dark:border-blue-800',
+                                            'processing' => 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-400 dark:border-amber-800',
+                                            'cancelled' => 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/50 dark:text-rose-400 dark:border-rose-800',
+                                            default => 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
                                         };
                                     @endphp
                                     <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold border {{ $badgeClasses }}">
                                         {{ ucfirst($order->status) }}
                                     </span>
                                 </td>
-                                <td class="px-5 py-3.5 text-right text-gray-500 font-mono text-[11px]">
+                                <td class="px-5 py-3.5 text-right text-slate-500 dark:text-slate-400 font-mono text-[11px]">
                                     {{ $order->created_at ? $order->created_at->format('M d, Y') : 'N/A' }}
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-5 py-8 text-center text-gray-400">No orders recorded yet.</td>
+                                <td colspan="5" class="px-5 py-8 text-center text-slate-400">No orders recorded yet.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -183,19 +198,19 @@
         </div>
 
         <!-- Top Selling Products -->
-        <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm p-5">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm p-5">
             <div class="mb-4">
-                <h3 class="text-sm font-bold text-gray-900 dark:text-white">Top Selling Products</h3>
-                <p class="text-xs text-gray-500 dark:text-gray-400">Products generating highest sales</p>
+                <h3 class="text-sm font-bold text-slate-900 dark:text-white">Top Selling Products</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Products generating highest sales</p>
             </div>
-            <div class="space-y-3.5">
+            <div class="space-y-3">
                 @forelse($topProducts as $item)
                     @php
                         $p = $item->product;
                         $firstImg = $p->image ?: ($p->images->first()->image_path ?? '');
                     @endphp
-                    <div class="flex items-center gap-3 py-1 border-b border-gray-100 dark:border-gray-800 last:border-0">
-                        <div class="h-10 w-10 rounded-xl overflow-hidden shrink-0 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center">
+                    <div class="flex items-center gap-3 py-2 border-b border-slate-100 dark:border-slate-800/80 last:border-0">
+                        <div class="h-11 w-11 rounded-xl overflow-hidden shrink-0 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center">
                             @if($firstImg)
                                 @if(str_starts_with($firstImg, 'data:image') || str_starts_with($firstImg, 'http'))
                                     <img src="{{ $firstImg }}" class="h-full w-full object-cover">
@@ -203,19 +218,19 @@
                                     <img src="{{ asset('storage/' . $firstImg) }}" class="h-full w-full object-cover">
                                 @endif
                             @else
-                                <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                             @endif
                         </div>
                         <div class="flex-1 min-w-0">
-                            <h4 class="text-xs font-bold text-gray-900 dark:text-white truncate">{{ $p->name }}</h4>
-                            <p class="text-[11px] text-gray-500">{{ $item->sales_count }} Sales</p>
+                            <h4 class="text-xs font-bold text-slate-900 dark:text-white truncate">{{ $p->name }}</h4>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400">{{ $item->sales_count }} Sales</p>
                         </div>
-                        <div class="text-right text-xs font-bold text-primary">
+                        <div class="text-right text-xs font-bold text-emerald-600 dark:text-emerald-400">
                             ৳{{ number_format($item->total_revenue, 2) }}
                         </div>
                     </div>
                 @empty
-                    <div class="py-8 text-center text-xs text-gray-400">No sales recorded yet.</div>
+                    <div class="py-8 text-center text-xs text-slate-400">No sales recorded yet.</div>
                 @endforelse
             </div>
         </div>
@@ -223,114 +238,198 @@
 
 </div>
 
-<!-- Initialize Dashboard Chart.js Scripts -->
+<!-- Initialize Dashboard Chart.js Scripts with Dynamic Theme Support -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Revenue Overview Line Chart
-    const revCtx = document.getElementById('revenueChart');
-    if (revCtx) {
-        new Chart(revCtx, {
-            type: 'line',
-            data: {
-                labels: {!! json_encode($revenueLabels) !!},
-                datasets: [
-                    {
-                        label: 'Revenue (৳)',
-                        data: {!! json_encode($revenueValues) !!},
-                        borderColor: '#16A34A',
-                        backgroundColor: '#16A34A',
+    let revenueChartInstance = null;
+    let salesChartInstance = null;
+    let ordersTrendChartInstance = null;
+
+    function initOrUpdateCharts() {
+        const themeColors = window.getChartThemeColors ? window.getChartThemeColors() : {
+            isDark: document.documentElement.classList.contains('dark'),
+            textColor: '#64748B',
+            gridColor: 'rgba(226, 232, 240, 0.8)',
+            tooltipBg: '#0F172A',
+            tooltipText: '#FFFFFF',
+            primaryColor: '#10B981',
+            primaryFill: 'rgba(16, 185, 129, 0.15)',
+        };
+
+        // 1. Revenue Overview Line Chart
+        const revCtx = document.getElementById('revenueChart');
+        if (revCtx) {
+            if (revenueChartInstance) {
+                revenueChartInstance.destroy();
+            }
+            revenueChartInstance = new Chart(revCtx, {
+                type: 'line',
+                data: {
+                    labels: {!! json_encode($revenueLabels) !!},
+                    datasets: [
+                        {
+                            label: 'Revenue (৳)',
+                            data: {!! json_encode($revenueValues) !!},
+                            borderColor: '#10B981',
+                            backgroundColor: '#10B981',
+                            tension: 0.35,
+                            borderWidth: 2.5,
+                            pointRadius: 3,
+                            pointHoverRadius: 5,
+                        },
+                        {
+                            label: 'Expenses (৳)',
+                            data: {!! json_encode($expenseValues) !!},
+                            borderColor: '#38BDF8',
+                            backgroundColor: '#38BDF8',
+                            borderDash: [4, 4],
+                            tension: 0.35,
+                            borderWidth: 2,
+                            pointRadius: 2,
+                            pointHoverRadius: 4,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'top', 
+                            labels: { 
+                                boxWidth: 12, 
+                                color: themeColors.textColor,
+                                font: { size: 10, weight: 600 } 
+                            } 
+                        },
+                        tooltip: {
+                            backgroundColor: themeColors.tooltipBg,
+                            titleColor: themeColors.tooltipText,
+                            bodyColor: themeColors.tooltipText,
+                            padding: 10,
+                            cornerRadius: 8,
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            grid: { color: themeColors.gridColor }, 
+                            ticks: { color: themeColors.textColor, font: { size: 10 } } 
+                        },
+                        x: { 
+                            grid: { display: false }, 
+                            ticks: { color: themeColors.textColor, font: { size: 10 } } 
+                        }
+                    }
+                }
+            });
+        }
+
+        // 2. Sales Analytics Bar Chart
+        const salesCtx = document.getElementById('salesChart');
+        if (salesCtx) {
+            if (salesChartInstance) {
+                salesChartInstance.destroy();
+            }
+            salesChartInstance = new Chart(salesCtx, {
+                type: 'bar',
+                data: {
+                    labels: {!! json_encode($salesLabels) !!},
+                    datasets: [{
+                        label: 'Orders',
+                        data: {!! json_encode($salesValues) !!},
+                        backgroundColor: '#10B981',
+                        borderRadius: 6,
+                        hoverBackgroundColor: '#059669',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: themeColors.tooltipBg,
+                            titleColor: themeColors.tooltipText,
+                            bodyColor: themeColors.tooltipText,
+                            padding: 10,
+                            cornerRadius: 8,
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            grid: { color: themeColors.gridColor }, 
+                            ticks: { color: themeColors.textColor, font: { size: 10 } } 
+                        },
+                        x: { 
+                            grid: { display: false }, 
+                            ticks: { color: themeColors.textColor, font: { size: 10 } } 
+                        }
+                    }
+                }
+            });
+        }
+
+        // 3. Orders Trend Area Chart
+        const trendCtx = document.getElementById('ordersTrendChart');
+        if (trendCtx) {
+            if (ordersTrendChartInstance) {
+                ordersTrendChartInstance.destroy();
+            }
+            const gradient = trendCtx.getContext('2d').createLinearGradient(0, 0, 0, 200);
+            gradient.addColorStop(0, themeColors.primaryFill);
+            gradient.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+
+            ordersTrendChartInstance = new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: {!! json_encode($orderTrendLabels) !!},
+                    datasets: [{
+                        label: 'Orders',
+                        data: {!! json_encode($orderTrendValues) !!},
+                        borderColor: '#10B981',
+                        backgroundColor: gradient,
+                        fill: true,
                         tension: 0.35,
                         borderWidth: 2.5,
                         pointRadius: 3,
+                        pointHoverRadius: 5,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: themeColors.tooltipBg,
+                            titleColor: themeColors.tooltipText,
+                            bodyColor: themeColors.tooltipText,
+                            padding: 10,
+                            cornerRadius: 8,
+                        }
                     },
-                    {
-                        label: 'Expenses (৳)',
-                        data: {!! json_encode($expenseValues) !!},
-                        borderColor: '#4ADE80',
-                        backgroundColor: '#4ADE80',
-                        borderDash: [4, 4],
-                        tension: 0.35,
-                        borderWidth: 2,
-                        pointRadius: 2,
+                    scales: {
+                        y: { 
+                            grid: { color: themeColors.gridColor }, 
+                            ticks: { color: themeColors.textColor, font: { size: 10 } } 
+                        },
+                        x: { 
+                            grid: { display: false }, 
+                            ticks: { color: themeColors.textColor, font: { size: 10 } } 
+                        }
                     }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'top', labels: { boxWidth: 12, font: { size: 10 } } }
-                },
-                scales: {
-                    y: { grid: { color: 'rgba(156, 163, 175, 0.1)' }, ticks: { font: { size: 10 } } },
-                    x: { grid: { display: false }, ticks: { font: { size: 10 } } }
                 }
-            }
-        });
+            });
+        }
     }
 
-    // 2. Sales Analytics Bar Chart
-    const salesCtx = document.getElementById('salesChart');
-    if (salesCtx) {
-        new Chart(salesCtx, {
-            type: 'bar',
-            data: {
-                labels: {!! json_encode($salesLabels) !!},
-                datasets: [{
-                    label: 'Orders',
-                    data: {!! json_encode($salesValues) !!},
-                    backgroundColor: '#16A34A',
-                    borderRadius: 6,
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    y: { grid: { color: 'rgba(156, 163, 175, 0.1)' }, ticks: { font: { size: 10 } } },
-                    x: { grid: { display: false }, ticks: { font: { size: 10 } } }
-                }
-            }
-        });
-    }
+    // Initial render
+    initOrUpdateCharts();
 
-    // 3. Orders Trend Area Chart
-    const trendCtx = document.getElementById('ordersTrendChart');
-    if (trendCtx) {
-        const gradient = trendCtx.getContext('2d').createLinearGradient(0, 0, 0, 200);
-        gradient.addColorStop(0, 'rgba(22, 163, 74, 0.4)');
-        gradient.addColorStop(1, 'rgba(22, 163, 74, 0.0)');
-
-        new Chart(trendCtx, {
-            type: 'line',
-            data: {
-                labels: {!! json_encode($orderTrendLabels) !!},
-                datasets: [{
-                    label: 'Orders',
-                    data: {!! json_encode($orderTrendValues) !!},
-                    borderColor: '#16A34A',
-                    backgroundColor: gradient,
-                    fill: true,
-                    tension: 0.35,
-                    borderWidth: 2.5,
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    y: { grid: { color: 'rgba(156, 163, 175, 0.1)' }, ticks: { font: { size: 10 } } },
-                    x: { grid: { display: false }, ticks: { font: { size: 10 } } }
-                }
-            }
-        });
-    }
+    // Re-render charts when theme switches dynamically
+    window.addEventListener('themechanged', () => {
+        setTimeout(initOrUpdateCharts, 50);
+    });
 });
 </script>
 @endsection

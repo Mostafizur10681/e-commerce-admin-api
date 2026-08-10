@@ -1127,11 +1127,14 @@ class ProductSeeder extends Seeder
 
         foreach ($products as $product) {
             $slug = Str::slug($product['name']) . '-' . substr(uniqid(), -8);
-            DB::table('products')->insert(array_merge($product, [
-                'slug'       => $slug,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]));
+            DB::table('products')->updateOrInsert(
+                ['SKU' => $product['SKU']],
+                array_merge($product, [
+                    'slug'       => $slug,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ])
+            );
         }
     }
 }

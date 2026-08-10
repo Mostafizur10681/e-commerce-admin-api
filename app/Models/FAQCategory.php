@@ -37,4 +37,17 @@ class FAQCategory extends Model
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
     }
+
+    public function faqs(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Faq::class, 'category', 'name');
+    }
+
+    public function getStatusAttribute($value)
+    {
+        if (is_bool($value) || $value === 1 || $value === 0 || $value === '1' || $value === '0') {
+            return $value ? 'active' : 'inactive';
+        }
+        return $value;
+    }
 }

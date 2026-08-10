@@ -24,17 +24,21 @@
 
             <div class="overflow-y-auto flex-1 divide-y divide-gray-100 dark:divide-gray-800">
                 @forelse($sessions as $sess)
+                    @php
+                        $name = $sess->user ? $sess->user->name : ($sess->session_id ? 'Guest (' . substr($sess->session_id, 0, 8) . ')' : 'Website Visitor');
+                        $email = $sess->user ? $sess->user->email : 'Anonymous session';
+                    @endphp
                     <a href="{{ route('admin.chats.index', ['session_id' => $sess->session_id]) }}" class="p-3.5 block hover:bg-white dark:hover:bg-gray-800 transition-colors {{ $activeSessionId === $sess->session_id ? 'bg-white dark:bg-gray-800 border-l-4 border-l-primary' : '' }}">
                         <div class="flex items-center gap-3">
                             <div class="h-10 w-10 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-sm shrink-0">
-                                {{ strtoupper(substr($sess->sender_name ?: 'Visitor', 0, 1)) }}
+                                {{ strtoupper(substr($name, 0, 1)) }}
                             </div>
                             <div class="min-w-0 flex-1">
                                 <div class="flex items-center justify-between">
-                                    <h4 class="font-bold text-xs text-gray-900 dark:text-white truncate">{{ $sess->sender_name ?: 'Website Visitor' }}</h4>
+                                    <h4 class="font-bold text-xs text-gray-900 dark:text-white truncate">{{ $name }}</h4>
                                     <span class="text-[10px] text-gray-400 font-mono">{{ $sess->last_message_at ? \Carbon\Carbon::parse($sess->last_message_at)->format('H:i') : '' }}</span>
                                 </div>
-                                <p class="text-[11px] text-gray-500 truncate">{{ $sess->sender_email ?: 'Anonymous session' }}</p>
+                                <p class="text-[11px] text-gray-500 truncate">{{ $email }}</p>
                             </div>
                         </div>
                     </a>
@@ -60,10 +64,13 @@
                 <!-- Messages Thread -->
                 <div class="flex-1 overflow-y-auto p-4 space-y-3">
                     @forelse($messages as $msg)
-                        <div class="flex {{ $msg->sender_type === 'admin' ? 'justify-end' : 'justify-start' }}">
-                            <div class="max-w-[75%] rounded-2xl p-3 text-xs {{ $msg->sender_type === 'admin' ? 'bg-primary text-white rounded-br-none' : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-bl-none' }}">
+                        @php
+                            $isAdmin = ($msg->sender === 'admin' || $msg->sender_type === 'admin');
+                        @endphp
+                        <div class="flex {{ $isAdmin ? 'justify-end' : 'justify-start' }}">
+                            <div class="max-w-[75%] rounded-2xl p-3 text-xs {{ $isAdmin ? 'bg-primary text-white rounded-br-none' : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-bl-none' }}">
                                 <p class="leading-relaxed">{{ $msg->message }}</p>
-                                <span class="text-[9px] block mt-1 {{ $msg->sender_type === 'admin' ? 'text-white/70 text-right' : 'text-gray-400' }}">
+                                <span class="text-[9px] block mt-1 {{ $isAdmin ? 'text-white/70 text-right' : 'text-gray-400' }}">
                                     {{ $msg->created_at ? $msg->created_at->format('h:i A') : '' }}
                                 </span>
                             </div>

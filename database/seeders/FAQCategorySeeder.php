@@ -40,7 +40,7 @@ class FAQCategorySeeder extends Seeder
         ];
 
         foreach ($categories as $cat) {
-            \App\Models\FAQCategory::create($cat);
+            \App\Models\FAQCategory::updateOrCreate(['slug' => $cat['slug']], $cat);
         }
     }
 }

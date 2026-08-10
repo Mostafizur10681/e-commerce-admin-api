@@ -122,6 +122,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::delete('/locations/thanas/{id}', [LocationController::class, 'destroyThana'])->name('locations.thanas.destroy');
 
         // User & Staff Management
+        Route::match(['get', 'post'], '/users/{id}/update-status', [UserController::class, 'updateStatus'])->name('users.update-status');
         Route::post('/users/{id}/approve', [UserController::class, 'approve'])->name('users.approve');
         Route::post('/users/{id}/reject', [UserController::class, 'reject'])->name('users.reject');
         Route::post('/users/{id}/toggle-block', [UserController::class, 'toggleBlock'])->name('users.toggle-block');

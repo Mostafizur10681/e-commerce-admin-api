@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full" x-data="{
-    darkMode: localStorage.getItem('theme') === 'dark',
+    theme: localStorage.getItem('theme') || 'light',
     sidebarCollapsed: false,
     mobileOpen: false,
-    theme: localStorage.getItem('theme') || 'light',
     setTheme(val) {
         this.theme = val;
         window.toggleDarkMode(val);
@@ -15,13 +14,28 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'Admin Panel' }} — Shoukhin Fashion</title>
     
+    <!-- Anti-FOUC Theme Initializer -->
+    <script>
+        (function() {
+            try {
+                const theme = localStorage.getItem('theme') || 'light';
+                const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght,wdth,slnt,grad,ROND@8..144,100..1000,75..125,-12..0,0,0..1&display=swap" rel="stylesheet">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white antialiased transition-colors duration-200 flex overflow-x-hidden">
+<body class="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased transition-colors duration-200 flex overflow-x-hidden">
 
     @php
         $pendingOrdersCount = \App\Models\Order::where('status', 'pending')->count();
@@ -35,18 +49,21 @@
 
     <!-- DESKTOP SIDEBAR -->
     <aside 
-        class="hidden md:flex flex-col fixed inset-y-0 left-0 z-30 border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 transition-all duration-300"
-        :class="sidebarCollapsed ? 'w-16' : 'w-64'"
+        class="hidden md:flex flex-col fixed inset-y-0 left-0 z-30 border-r border-slate-200 dark:border-slate-800/80 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md transition-all duration-300 shadow-sm"
+        :class="sidebarCollapsed ? 'w-20' : 'w-64'"
     >
         <!-- Sidebar Header -->
-        <div class="flex items-center h-16 px-4 border-b border-gray-200 dark:border-gray-800" :class="sidebarCollapsed ? 'justify-center' : 'justify-between px-6'">
-            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 font-bold text-lg">
-                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-white shadow-md shadow-primary/20 shrink-0">
+        <div class="flex items-center h-16 px-4 border-b border-slate-200 dark:border-slate-800/80" :class="sidebarCollapsed ? 'justify-center' : 'justify-between px-6'">
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 font-bold text-lg group">
+                <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-md shadow-emerald-500/25 shrink-0 group-hover:scale-105 transition-transform">
                     <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
                     </svg>
                 </div>
-                <span x-show="!sidebarCollapsed" class="tracking-tight text-gray-900 dark:text-white font-bold truncate">Shoukhin</span>
+                <div x-show="!sidebarCollapsed" class="flex flex-col">
+                    <span class="tracking-tight text-slate-900 dark:text-white font-bold leading-tight truncate">Shoukhin</span>
+                    <span class="text-[10px] text-slate-500 dark:text-slate-400 font-semibold tracking-wider uppercase">Admin Portal</span>
+                </div>
             </a>
         </div>
 
@@ -55,7 +72,7 @@
             <!-- Dashboard -->
             <a 
                 href="{{ route('admin.dashboard') }}" 
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-primary text-white shadow-md shadow-primary/15' : 'text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary' }}"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20 font-semibold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white' }}"
                 :class="sidebarCollapsed && 'justify-center px-2'"
                 title="Dashboard"
             >
@@ -70,7 +87,7 @@
                 <button 
                     @click="if(sidebarCollapsed) { sidebarCollapsed = false; open = true; } else { open = !open; }" 
                     type="button" 
-                    class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/products*') ? 'bg-gray-100 dark:bg-gray-800/60 text-primary font-semibold' : 'text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary' }}"
+                    class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/products*') ? 'bg-slate-100 dark:bg-slate-800/80 text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white' }}"
                     :class="sidebarCollapsed && 'justify-center px-2'"
                     title="Products"
                 >
@@ -80,16 +97,16 @@
                         </svg>
                         <span x-show="!sidebarCollapsed">Products</span>
                     </div>
-                    <svg x-show="!sidebarCollapsed" class="h-4 w-4 text-gray-400 transition-transform duration-300" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg x-show="!sidebarCollapsed" class="h-4 w-4 text-slate-400 transition-transform duration-300" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
                 <div x-show="open && !sidebarCollapsed" x-collapse class="pl-4 pr-1 py-1 space-y-1 text-xs">
-                    <a href="{{ route('admin.products.index') }}" class="flex items-center px-3 py-2 rounded-xl border-l-4 transition-all {{ request()->routeIs('admin.products.index') ? 'bg-green-50 dark:bg-green-950/20 text-primary font-semibold border-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary border-transparent pl-4' }}">
-                        <span class="mr-1.5 font-bold">○</span> All Products
+                    <a href="{{ route('admin.products.index') }}" class="flex items-center px-3.5 py-2 rounded-xl border-l-2 transition-all {{ request()->routeIs('admin.products.index') ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold border-emerald-500' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent' }}">
+                        <span class="mr-2">○</span> All Products
                     </a>
-                    <a href="{{ route('admin.products.create') }}" class="flex items-center px-3 py-2 rounded-xl border-l-4 transition-all {{ request()->routeIs('admin.products.create') ? 'bg-green-50 dark:bg-green-950/20 text-primary font-semibold border-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary border-transparent pl-4' }}">
-                        <span class="mr-1.5 font-bold">○</span> Add Product
+                    <a href="{{ route('admin.products.create') }}" class="flex items-center px-3.5 py-2 rounded-xl border-l-2 transition-all {{ request()->routeIs('admin.products.create') ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold border-emerald-500' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent' }}">
+                        <span class="mr-2">○</span> Add Product
                     </a>
                 </div>
             </div>
@@ -99,7 +116,7 @@
                 <button 
                     @click="if(sidebarCollapsed) { sidebarCollapsed = false; open = true; } else { open = !open; }" 
                     type="button" 
-                    class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ (request()->is('admin/categories*') || request()->is('admin/sub-categories*')) ? 'bg-gray-100 dark:bg-gray-800/60 text-primary font-semibold' : 'text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary' }}"
+                    class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ (request()->is('admin/categories*') || request()->is('admin/sub-categories*')) ? 'bg-slate-100 dark:bg-slate-800/80 text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white' }}"
                     :class="sidebarCollapsed && 'justify-center px-2'"
                     title="Categories"
                 >
@@ -109,22 +126,22 @@
                         </svg>
                         <span x-show="!sidebarCollapsed">Categories</span>
                     </div>
-                    <svg x-show="!sidebarCollapsed" class="h-4 w-4 text-gray-400 transition-transform duration-300" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg x-show="!sidebarCollapsed" class="h-4 w-4 text-slate-400 transition-transform duration-300" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
                 <div x-show="open && !sidebarCollapsed" x-collapse class="pl-4 pr-1 py-1 space-y-1 text-xs">
-                    <a href="{{ route('admin.categories.index') }}" class="flex items-center px-3 py-2 rounded-xl border-l-4 transition-all {{ request()->routeIs('admin.categories.index') ? 'bg-green-50 dark:bg-green-950/20 text-primary font-semibold border-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary border-transparent pl-4' }}">
-                        <span class="mr-1.5 font-bold">○</span> Main Categories
+                    <a href="{{ route('admin.categories.index') }}" class="flex items-center px-3.5 py-2 rounded-xl border-l-2 transition-all {{ request()->routeIs('admin.categories.index') ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold border-emerald-500' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent' }}">
+                        <span class="mr-2">○</span> Main Categories
                     </a>
-                    <a href="{{ route('admin.categories.create') }}" class="flex items-center px-3 py-2 rounded-xl border-l-4 transition-all {{ request()->routeIs('admin.categories.create') ? 'bg-green-50 dark:bg-green-950/20 text-primary font-semibold border-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary border-transparent pl-4' }}">
-                        <span class="mr-1.5 font-bold">○</span> Add Category
+                    <a href="{{ route('admin.categories.create') }}" class="flex items-center px-3.5 py-2 rounded-xl border-l-2 transition-all {{ request()->routeIs('admin.categories.create') ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold border-emerald-500' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent' }}">
+                        <span class="mr-2">○</span> Add Category
                     </a>
-                    <a href="{{ route('admin.sub-categories.index') }}" class="flex items-center px-3 py-2 rounded-xl border-l-4 transition-all {{ request()->routeIs('admin.sub-categories.index') ? 'bg-green-50 dark:bg-green-950/20 text-primary font-semibold border-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary border-transparent pl-4' }}">
-                        <span class="mr-1.5 font-bold">○</span> Sub Categories
+                    <a href="{{ route('admin.sub-categories.index') }}" class="flex items-center px-3.5 py-2 rounded-xl border-l-2 transition-all {{ request()->routeIs('admin.sub-categories.index') ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold border-emerald-500' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent' }}">
+                        <span class="mr-2">○</span> Sub Categories
                     </a>
-                    <a href="{{ route('admin.sub-categories.create') }}" class="flex items-center px-3 py-2 rounded-xl border-l-4 transition-all {{ request()->routeIs('admin.sub-categories.create') ? 'bg-green-50 dark:bg-green-950/20 text-primary font-semibold border-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary border-transparent pl-4' }}">
-                        <span class="mr-1.5 font-bold">○</span> Add Sub Category
+                    <a href="{{ route('admin.sub-categories.create') }}" class="flex items-center px-3.5 py-2 rounded-xl border-l-2 transition-all {{ request()->routeIs('admin.sub-categories.create') ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold border-emerald-500' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent' }}">
+                        <span class="mr-2">○</span> Add Sub Category
                     </a>
                 </div>
             </div>
@@ -134,7 +151,7 @@
                 <button 
                     @click="if(sidebarCollapsed) { sidebarCollapsed = false; open = true; } else { open = !open; }" 
                     type="button" 
-                    class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/attributes*') ? 'bg-gray-100 dark:bg-gray-800/60 text-primary font-semibold' : 'text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary' }}"
+                    class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/attributes*') ? 'bg-slate-100 dark:bg-slate-800/80 text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white' }}"
                     :class="sidebarCollapsed && 'justify-center px-2'"
                     title="Attributes"
                 >
@@ -144,16 +161,16 @@
                         </svg>
                         <span x-show="!sidebarCollapsed">Attributes</span>
                     </div>
-                    <svg x-show="!sidebarCollapsed" class="h-4 w-4 text-gray-400 transition-transform duration-300" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg x-show="!sidebarCollapsed" class="h-4 w-4 text-slate-400 transition-transform duration-300" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
                 <div x-show="open && !sidebarCollapsed" x-collapse class="pl-4 pr-1 py-1 space-y-1 text-xs">
-                    <a href="{{ route('admin.attributes.index') }}" class="flex items-center px-3 py-2 rounded-xl border-l-4 transition-all {{ request()->routeIs('admin.attributes.index') ? 'bg-green-50 dark:bg-green-950/20 text-primary font-semibold border-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary border-transparent pl-4' }}">
-                        <span class="mr-1.5 font-bold">○</span> Attributes List
+                    <a href="{{ route('admin.attributes.index') }}" class="flex items-center px-3.5 py-2 rounded-xl border-l-2 transition-all {{ request()->routeIs('admin.attributes.index') ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold border-emerald-500' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent' }}">
+                        <span class="mr-2">○</span> Attributes List
                     </a>
-                    <a href="{{ route('admin.attributes.create') }}" class="flex items-center px-3 py-2 rounded-xl border-l-4 transition-all {{ request()->routeIs('admin.attributes.create') ? 'bg-green-50 dark:bg-green-950/20 text-primary font-semibold border-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary border-transparent pl-4' }}">
-                        <span class="mr-1.5 font-bold">○</span> Add Attribute
+                    <a href="{{ route('admin.attributes.create') }}" class="flex items-center px-3.5 py-2 rounded-xl border-l-2 transition-all {{ request()->routeIs('admin.attributes.create') ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold border-emerald-500' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent' }}">
+                        <span class="mr-2">○</span> Add Attribute
                     </a>
                 </div>
             </div>
@@ -163,7 +180,7 @@
                 <button 
                     @click="if(sidebarCollapsed) { sidebarCollapsed = false; open = true; } else { open = !open; }" 
                     type="button" 
-                    class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/orders*') ? 'bg-gray-100 dark:bg-gray-800/60 text-primary font-semibold' : 'text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary' }}"
+                    class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/orders*') ? 'bg-slate-100 dark:bg-slate-800/80 text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white' }}"
                     :class="sidebarCollapsed && 'justify-center px-2'"
                     title="Orders"
                 >
@@ -177,20 +194,20 @@
                         @if($pendingOrdersCount > 0)
                             <span class="px-1.5 py-0.5 text-[10px] font-bold bg-amber-500 text-white rounded-full">{{ $pendingOrdersCount }}</span>
                         @endif
-                        <svg class="h-4 w-4 text-gray-400 transition-transform duration-300" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg class="h-4 w-4 text-slate-400 transition-transform duration-300" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </div>
                 </button>
                 <div x-show="open && !sidebarCollapsed" x-collapse class="pl-4 pr-1 py-1 space-y-1 text-xs">
-                    <a href="{{ route('admin.orders.index') }}" class="flex items-center px-3 py-2 rounded-xl border-l-4 transition-all {{ request()->routeIs('admin.orders.index') ? 'bg-green-50 dark:bg-green-950/20 text-primary font-semibold border-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary border-transparent pl-4' }}">
-                        <span class="mr-1.5 font-bold">○</span> Order List
+                    <a href="{{ route('admin.orders.index') }}" class="flex items-center px-3.5 py-2 rounded-xl border-l-2 transition-all {{ request()->routeIs('admin.orders.index') ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold border-emerald-500' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent' }}">
+                        <span class="mr-2">○</span> Order List
                     </a>
-                    <a href="{{ route('admin.orders.payment-status') }}" class="flex items-center px-3 py-2 rounded-xl border-l-4 transition-all {{ request()->routeIs('admin.orders.payment-status') ? 'bg-green-50 dark:bg-green-950/20 text-primary font-semibold border-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary border-transparent pl-4' }}">
-                        <span class="mr-1.5 font-bold">○</span> Payment Status
+                    <a href="{{ route('admin.orders.payment-status') }}" class="flex items-center px-3.5 py-2 rounded-xl border-l-2 transition-all {{ request()->routeIs('admin.orders.payment-status') ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold border-emerald-500' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent' }}">
+                        <span class="mr-2">○</span> Payment Status
                     </a>
-                    <a href="{{ route('admin.orders.order-status') }}" class="flex items-center px-3 py-2 rounded-xl border-l-4 transition-all {{ request()->routeIs('admin.orders.order-status') ? 'bg-green-50 dark:bg-green-950/20 text-primary font-semibold border-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary border-transparent pl-4' }}">
-                        <span class="mr-1.5 font-bold">○</span> Order Status
+                    <a href="{{ route('admin.orders.order-status') }}" class="flex items-center px-3.5 py-2 rounded-xl border-l-2 transition-all {{ request()->routeIs('admin.orders.order-status') ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold border-emerald-500' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent' }}">
+                        <span class="mr-2">○</span> Order Status
                     </a>
                 </div>
             </div>
@@ -198,7 +215,7 @@
             <!-- Customers -->
             <a 
                 href="{{ route('admin.customers.index') }}" 
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/customers*') ? 'bg-primary text-white shadow-md shadow-primary/15' : 'text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary' }}"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/customers*') ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20 font-semibold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white' }}"
                 :class="sidebarCollapsed && 'justify-center px-2'"
                 title="Customers"
             >
@@ -211,7 +228,7 @@
             <!-- Messages -->
             <a 
                 href="{{ route('admin.messages.index') }}" 
-                class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/messages*') ? 'bg-primary text-white shadow-md shadow-primary/15' : 'text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary' }}"
+                class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/messages*') ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20 font-semibold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white' }}"
                 :class="sidebarCollapsed && 'justify-center px-2'"
                 title="Messages"
             >
@@ -222,14 +239,14 @@
                     <span x-show="!sidebarCollapsed">Messages</span>
                 </div>
                 @if($unreadMessagesCount > 0)
-                    <span x-show="!sidebarCollapsed" class="px-1.5 py-0.5 text-[10px] font-bold bg-red-500 text-white rounded-full">{{ $unreadMessagesCount }}</span>
+                    <span x-show="!sidebarCollapsed" class="px-1.5 py-0.5 text-[10px] font-bold bg-rose-500 text-white rounded-full">{{ $unreadMessagesCount }}</span>
                 @endif
             </a>
 
             <!-- Live Chat -->
             <a 
                 href="{{ route('admin.chats.index') }}" 
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/chats*') ? 'bg-primary text-white shadow-md shadow-primary/15' : 'text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary' }}"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/chats*') ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20 font-semibold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white' }}"
                 :class="sidebarCollapsed && 'justify-center px-2'"
                 title="Live Chat"
             >
@@ -244,7 +261,7 @@
                 <button 
                     @click="if(sidebarCollapsed) { sidebarCollapsed = false; open = true; } else { open = !open; }" 
                     type="button" 
-                    class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/reviews*') ? 'bg-gray-100 dark:bg-gray-800/60 text-primary font-semibold' : 'text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary' }}"
+                    class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/reviews*') ? 'bg-slate-100 dark:bg-slate-800/80 text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white' }}"
                     :class="sidebarCollapsed && 'justify-center px-2'"
                     title="Reviews"
                 >
@@ -254,16 +271,16 @@
                         </svg>
                         <span x-show="!sidebarCollapsed">Reviews</span>
                     </div>
-                    <svg x-show="!sidebarCollapsed" class="h-4 w-4 text-gray-400 transition-transform duration-300" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg x-show="!sidebarCollapsed" class="h-4 w-4 text-slate-400 transition-transform duration-300" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
                 <div x-show="open && !sidebarCollapsed" x-collapse class="pl-4 pr-1 py-1 space-y-1 text-xs">
-                    <a href="{{ route('admin.reviews.index') }}" class="flex items-center px-3 py-2 rounded-xl border-l-4 transition-all {{ request()->routeIs('admin.reviews.index') ? 'bg-green-50 dark:bg-green-950/20 text-primary font-semibold border-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary border-transparent pl-4' }}">
-                        <span class="mr-1.5 font-bold">○</span> Reviews List
+                    <a href="{{ route('admin.reviews.index') }}" class="flex items-center px-3.5 py-2 rounded-xl border-l-2 transition-all {{ request()->routeIs('admin.reviews.index') ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold border-emerald-500' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent' }}">
+                        <span class="mr-2">○</span> Reviews List
                     </a>
-                    <a href="{{ route('admin.reviews.create') }}" class="flex items-center px-3 py-2 rounded-xl border-l-4 transition-all {{ request()->routeIs('admin.reviews.create') ? 'bg-green-50 dark:bg-green-950/20 text-primary font-semibold border-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary border-transparent pl-4' }}">
-                        <span class="mr-1.5 font-bold">○</span> Add Review
+                    <a href="{{ route('admin.reviews.create') }}" class="flex items-center px-3.5 py-2 rounded-xl border-l-2 transition-all {{ request()->routeIs('admin.reviews.create') ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold border-emerald-500' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent' }}">
+                        <span class="mr-2">○</span> Add Review
                     </a>
                 </div>
             </div>
@@ -271,7 +288,7 @@
             <!-- Wishlist -->
             <a 
                 href="{{ route('admin.wishlist.index') }}" 
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/wishlist*') ? 'bg-primary text-white shadow-md shadow-primary/15' : 'text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary' }}"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/wishlist*') ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20 font-semibold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white' }}"
                 :class="sidebarCollapsed && 'justify-center px-2'"
                 title="Wishlist"
             >
@@ -286,7 +303,7 @@
                 <button 
                     @click="if(sidebarCollapsed) { sidebarCollapsed = false; open = true; } else { open = !open; }" 
                     type="button" 
-                    class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/partners*') ? 'bg-gray-100 dark:bg-gray-800/60 text-primary font-semibold' : 'text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary' }}"
+                    class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/partners*') ? 'bg-slate-100 dark:bg-slate-800/80 text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white' }}"
                     :class="sidebarCollapsed && 'justify-center px-2'"
                     title="Partners"
                 >
@@ -296,16 +313,16 @@
                         </svg>
                         <span x-show="!sidebarCollapsed">Partners</span>
                     </div>
-                    <svg x-show="!sidebarCollapsed" class="h-4 w-4 text-gray-400 transition-transform duration-300" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg x-show="!sidebarCollapsed" class="h-4 w-4 text-slate-400 transition-transform duration-300" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
                 <div x-show="open && !sidebarCollapsed" x-collapse class="pl-4 pr-1 py-1 space-y-1 text-xs">
-                    <a href="{{ route('admin.partners.index') }}" class="flex items-center px-3 py-2 rounded-xl border-l-4 transition-all {{ request()->routeIs('admin.partners.index') ? 'bg-green-50 dark:bg-green-950/20 text-primary font-semibold border-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary border-transparent pl-4' }}">
-                        <span class="mr-1.5 font-bold">○</span> Partner List
+                    <a href="{{ route('admin.partners.index') }}" class="flex items-center px-3.5 py-2 rounded-xl border-l-2 transition-all {{ request()->routeIs('admin.partners.index') ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold border-emerald-500' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent' }}">
+                        <span class="mr-2">○</span> Partner List
                     </a>
-                    <a href="{{ route('admin.partners.create') }}" class="flex items-center px-3 py-2 rounded-xl border-l-4 transition-all {{ request()->routeIs('admin.partners.create') ? 'bg-green-50 dark:bg-green-950/20 text-primary font-semibold border-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary border-transparent pl-4' }}">
-                        <span class="mr-1.5 font-bold">○</span> Add Partner
+                    <a href="{{ route('admin.partners.create') }}" class="flex items-center px-3.5 py-2 rounded-xl border-l-2 transition-all {{ request()->routeIs('admin.partners.create') ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold border-emerald-500' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent' }}">
+                        <span class="mr-2">○</span> Add Partner
                     </a>
                 </div>
             </div>
@@ -315,29 +332,29 @@
                 <button 
                     @click="if(sidebarCollapsed) { sidebarCollapsed = false; open = true; } else { open = !open; }" 
                     type="button" 
-                    class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ (request()->is('admin/faqs*') || request()->is('admin/faq-categories*')) ? 'bg-gray-100 dark:bg-gray-800/60 text-primary font-semibold' : 'text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary' }}"
+                    class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ (request()->is('admin/faqs*') || request()->is('admin/faq-categories*')) ? 'bg-slate-100 dark:bg-slate-800/80 text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white' }}"
                     :class="sidebarCollapsed && 'justify-center px-2'"
                     title="FAQs"
                 >
                     <div class="flex items-center gap-3">
                         <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0118 0Zm-9 5.25h.008v.008H12v-.008Z" />
                         </svg>
                         <span x-show="!sidebarCollapsed">FAQs</span>
                     </div>
-                    <svg x-show="!sidebarCollapsed" class="h-4 w-4 text-gray-400 transition-transform duration-300" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg x-show="!sidebarCollapsed" class="h-4 w-4 text-slate-400 transition-transform duration-300" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
                 <div x-show="open && !sidebarCollapsed" x-collapse class="pl-4 pr-1 py-1 space-y-1 text-xs">
-                    <a href="{{ route('admin.faq-categories.index') }}" class="flex items-center px-3 py-2 rounded-xl border-l-4 transition-all {{ request()->routeIs('admin.faq-categories.index') ? 'bg-green-50 dark:bg-green-950/20 text-primary font-semibold border-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary border-transparent pl-4' }}">
-                        <span class="mr-1.5 font-bold">○</span> FAQ Categories
+                    <a href="{{ route('admin.faq-categories.index') }}" class="flex items-center px-3.5 py-2 rounded-xl border-l-2 transition-all {{ request()->routeIs('admin.faq-categories.index') ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold border-emerald-500' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent' }}">
+                        <span class="mr-2">○</span> FAQ Categories
                     </a>
-                    <a href="{{ route('admin.faqs.index') }}" class="flex items-center px-3 py-2 rounded-xl border-l-4 transition-all {{ request()->routeIs('admin.faqs.index') ? 'bg-green-50 dark:bg-green-950/20 text-primary font-semibold border-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary border-transparent pl-4' }}">
-                        <span class="mr-1.5 font-bold">○</span> FAQ List
+                    <a href="{{ route('admin.faqs.index') }}" class="flex items-center px-3.5 py-2 rounded-xl border-l-2 transition-all {{ request()->routeIs('admin.faqs.index') ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold border-emerald-500' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent' }}">
+                        <span class="mr-2">○</span> FAQ List
                     </a>
-                    <a href="{{ route('admin.faqs.create') }}" class="flex items-center px-3 py-2 rounded-xl border-l-4 transition-all {{ request()->routeIs('admin.faqs.create') ? 'bg-green-50 dark:bg-green-950/20 text-primary font-semibold border-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary border-transparent pl-4' }}">
-                        <span class="mr-1.5 font-bold">○</span> Add FAQ
+                    <a href="{{ route('admin.faqs.create') }}" class="flex items-center px-3.5 py-2 rounded-xl border-l-2 transition-all {{ request()->routeIs('admin.faqs.create') ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold border-emerald-500' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent' }}">
+                        <span class="mr-2">○</span> Add FAQ
                     </a>
                 </div>
             </div>
@@ -345,7 +362,7 @@
             <!-- Subscriptions -->
             <a 
                 href="{{ route('admin.subscriptions.index') }}" 
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/subscriptions*') ? 'bg-primary text-white shadow-md shadow-primary/15' : 'text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary' }}"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/subscriptions*') ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20 font-semibold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white' }}"
                 :class="sidebarCollapsed && 'justify-center px-2'"
                 title="Subscriptions"
             >
@@ -358,7 +375,7 @@
             <!-- Banners -->
             <a 
                 href="{{ route('admin.banners.index') }}" 
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/banners*') ? 'bg-primary text-white shadow-md shadow-primary/15' : 'text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary' }}"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/banners*') ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20 font-semibold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white' }}"
                 :class="sidebarCollapsed && 'justify-center px-2'"
                 title="Banners"
             >
@@ -373,7 +390,7 @@
                 <button 
                     @click="if(sidebarCollapsed) { sidebarCollapsed = false; open = true; } else { open = !open; }" 
                     type="button" 
-                    class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/locations*') ? 'bg-gray-100 dark:bg-gray-800/60 text-primary font-semibold' : 'text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary' }}"
+                    class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/locations*') ? 'bg-slate-100 dark:bg-slate-800/80 text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white' }}"
                     :class="sidebarCollapsed && 'justify-center px-2'"
                     title="Locations"
                 >
@@ -384,19 +401,19 @@
                         </svg>
                         <span x-show="!sidebarCollapsed">Locations</span>
                     </div>
-                    <svg x-show="!sidebarCollapsed" class="h-4 w-4 text-gray-400 transition-transform duration-300" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg x-show="!sidebarCollapsed" class="h-4 w-4 text-slate-400 transition-transform duration-300" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
                 <div x-show="open && !sidebarCollapsed" x-collapse class="pl-4 pr-1 py-1 space-y-1 text-xs">
-                    <a href="{{ route('admin.locations.divisions') }}" class="flex items-center px-3 py-2 rounded-xl border-l-4 transition-all {{ request()->routeIs('admin.locations.divisions') ? 'bg-green-50 dark:bg-green-950/20 text-primary font-semibold border-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary border-transparent pl-4' }}">
-                        <span class="mr-1.5 font-bold">○</span> Divisions
+                    <a href="{{ route('admin.locations.divisions') }}" class="flex items-center px-3.5 py-2 rounded-xl border-l-2 transition-all {{ request()->routeIs('admin.locations.divisions') ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold border-emerald-500' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent' }}">
+                        <span class="mr-2">○</span> Divisions
                     </a>
-                    <a href="{{ route('admin.locations.districts') }}" class="flex items-center px-3 py-2 rounded-xl border-l-4 transition-all {{ request()->routeIs('admin.locations.districts') ? 'bg-green-50 dark:bg-green-950/20 text-primary font-semibold border-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary border-transparent pl-4' }}">
-                        <span class="mr-1.5 font-bold">○</span> Districts
+                    <a href="{{ route('admin.locations.districts') }}" class="flex items-center px-3.5 py-2 rounded-xl border-l-2 transition-all {{ request()->routeIs('admin.locations.districts') ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold border-emerald-500' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent' }}">
+                        <span class="mr-2">○</span> Districts
                     </a>
-                    <a href="{{ route('admin.locations.thanas') }}" class="flex items-center px-3 py-2 rounded-xl border-l-4 transition-all {{ request()->routeIs('admin.locations.thanas') ? 'bg-green-50 dark:bg-green-950/20 text-primary font-semibold border-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary border-transparent pl-4' }}">
-                        <span class="mr-1.5 font-bold">○</span> Thanas
+                    <a href="{{ route('admin.locations.thanas') }}" class="flex items-center px-3.5 py-2 rounded-xl border-l-2 transition-all {{ request()->routeIs('admin.locations.thanas') ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold border-emerald-500' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent' }}">
+                        <span class="mr-2">○</span> Thanas
                     </a>
                 </div>
             </div>
@@ -404,7 +421,7 @@
             <!-- About Page Settings -->
             <a 
                 href="{{ route('admin.about.index') }}" 
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/about*') ? 'bg-primary text-white shadow-md shadow-primary/15' : 'text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary' }}"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/about*') ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20 font-semibold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white' }}"
                 :class="sidebarCollapsed && 'justify-center px-2'"
                 title="About Page"
             >
@@ -417,7 +434,7 @@
             <!-- Contact Settings -->
             <a 
                 href="{{ route('admin.contact-settings.index') }}" 
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/contact-settings*') ? 'bg-primary text-white shadow-md shadow-primary/15' : 'text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary' }}"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/contact-settings*') ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20 font-semibold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white' }}"
                 :class="sidebarCollapsed && 'justify-center px-2'"
                 title="Contact Page"
             >
@@ -430,7 +447,7 @@
             <!-- Footer Settings -->
             <a 
                 href="{{ route('admin.footer-settings.index') }}" 
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/footer-settings*') ? 'bg-primary text-white shadow-md shadow-primary/15' : 'text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary' }}"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/footer-settings*') ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20 font-semibold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white' }}"
                 :class="sidebarCollapsed && 'justify-center px-2'"
                 title="Footer Settings"
             >
@@ -443,7 +460,7 @@
             <!-- Users / Staff -->
             <a 
                 href="{{ route('admin.users.index') }}" 
-                class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/users*') ? 'bg-primary text-white shadow-md shadow-primary/15' : 'text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary' }}"
+                class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/users*') ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20 font-semibold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white' }}"
                 :class="sidebarCollapsed && 'justify-center px-2'"
                 title="Users"
             >
@@ -454,14 +471,14 @@
                     <span x-show="!sidebarCollapsed">Users</span>
                 </div>
                 @if($pendingUsersCount > 0)
-                    <span x-show="!sidebarCollapsed" class="px-1.5 py-0.5 text-[10px] font-bold bg-primary text-white rounded-full">{{ $pendingUsersCount }}</span>
+                    <span x-show="!sidebarCollapsed" class="px-1.5 py-0.5 text-[10px] font-bold bg-emerald-600 text-white rounded-full">{{ $pendingUsersCount }}</span>
                 @endif
             </a>
 
             <!-- Settings -->
             <a 
                 href="{{ route('admin.settings.index') }}" 
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/settings*') ? 'bg-primary text-white shadow-md shadow-primary/15' : 'text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary' }}"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->is('admin/settings*') ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20 font-semibold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white' }}"
                 :class="sidebarCollapsed && 'justify-center px-2'"
                 title="Settings"
             >
@@ -477,7 +494,7 @@
         <button 
             @click="sidebarCollapsed = !sidebarCollapsed" 
             type="button" 
-            class="absolute -right-3 top-10 h-6 w-6 rounded-full border border-gray-200 dark:border-gray-800 shadow-md bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 flex items-center justify-center cursor-pointer hover:bg-gray-50 z-40"
+            class="absolute -right-3 top-10 h-6 w-6 rounded-full border border-slate-200 dark:border-slate-800 shadow-md bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 flex items-center justify-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 z-40 transition-colors"
         >
             <svg x-show="!sidebarCollapsed" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -488,12 +505,12 @@
         </button>
 
         <!-- Sidebar Footer -->
-        <div class="p-4 border-t border-gray-200 dark:border-gray-800">
+        <div class="p-3 border-t border-slate-200 dark:border-slate-800/80">
             <form method="POST" action="{{ route('admin.logout') }}">
                 @csrf
                 <button 
                     type="submit" 
-                    class="w-full flex items-center gap-3 text-gray-500 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-600 text-sm font-medium justify-start px-3 py-2.5 rounded-xl transition-colors cursor-pointer"
+                    class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 hover:text-rose-600 dark:hover:text-rose-400 text-sm font-medium justify-start px-3.5 py-2.5 rounded-xl transition-colors cursor-pointer"
                     :class="sidebarCollapsed && 'justify-center px-2'"
                     title="Logout"
                 >
@@ -511,13 +528,13 @@
         x-show="mobileOpen" 
         x-cloak 
         @click="mobileOpen = false" 
-        class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden transition-opacity"
+        class="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-sm md:hidden transition-opacity"
     ></div>
     
     <div 
         x-show="mobileOpen" 
         x-cloak 
-        class="fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col md:hidden transition-transform"
+        class="fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col md:hidden transition-transform shadow-2xl"
         x-transition:enter="transition ease-out duration-300 transform"
         x-transition:enter-start="-translate-x-full"
         x-transition:enter-end="translate-x-0"
@@ -525,117 +542,173 @@
         x-transition:leave-start="translate-x-0"
         x-transition:leave-end="-translate-x-full"
     >
-        <div class="flex items-center justify-between h-16 px-6 border-b border-gray-200 dark:border-gray-800">
-            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 font-bold text-lg">
-                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-white">
+        <div class="flex items-center justify-between h-16 px-6 border-b border-slate-200 dark:border-slate-800">
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 font-bold text-lg">
+                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-md shadow-emerald-500/25">
                     <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
                     </svg>
                 </div>
-                <span>Shoukhin Fashion</span>
+                <span class="text-slate-900 dark:text-white font-bold">Shoukhin</span>
             </a>
-            <button @click="mobileOpen = false" class="p-1 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800">
-                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <button @click="mobileOpen = false" class="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
         </div>
         <div class="flex-1 px-4 py-6 overflow-y-auto space-y-1">
-            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-primary/10 hover:text-primary">Dashboard</a>
-            <a href="{{ route('admin.products.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-primary/10 hover:text-primary">Products</a>
-            <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-primary/10 hover:text-primary">Categories</a>
-            <a href="{{ route('admin.orders.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-primary/10 hover:text-primary">Orders</a>
-            <a href="{{ route('admin.customers.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-primary/10 hover:text-primary">Customers</a>
-            <a href="{{ route('admin.messages.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-primary/10 hover:text-primary">Messages</a>
-            <a href="{{ route('admin.chats.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-primary/10 hover:text-primary">Live Chat</a>
-            <a href="{{ route('admin.reviews.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-primary/10 hover:text-primary">Reviews</a>
-            <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-primary/10 hover:text-primary">Settings</a>
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:text-emerald-600 dark:hover:text-emerald-400">Dashboard</a>
+            <a href="{{ route('admin.products.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:text-emerald-600 dark:hover:text-emerald-400">Products</a>
+            <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:text-emerald-600 dark:hover:text-emerald-400">Categories</a>
+            <a href="{{ route('admin.orders.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:text-emerald-600 dark:hover:text-emerald-400">Orders</a>
+            <a href="{{ route('admin.customers.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:text-emerald-600 dark:hover:text-emerald-400">Customers</a>
+            <a href="{{ route('admin.messages.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:text-emerald-600 dark:hover:text-emerald-400">Messages</a>
+            <a href="{{ route('admin.chats.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:text-emerald-600 dark:hover:text-emerald-400">Live Chat</a>
+            <a href="{{ route('admin.reviews.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:text-emerald-600 dark:hover:text-emerald-400">Reviews</a>
+            <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:text-emerald-600 dark:hover:text-emerald-400">Settings</a>
         </div>
     </div>
 
     <!-- MAIN WRAPPER -->
     <div 
         class="flex-1 flex flex-col min-h-screen transition-all duration-300"
-        :class="sidebarCollapsed ? 'md:pl-16' : 'md:pl-64'"
+        :class="sidebarCollapsed ? 'md:pl-20' : 'md:pl-64'"
     >
         <!-- STICKY TOPBAR -->
-        <header class="sticky top-0 z-20 flex h-16 w-full items-center justify-between border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md px-4 md:px-6 shadow-sm">
+        <header class="sticky top-0 z-20 flex h-16 w-full items-center justify-between border-b border-slate-200 dark:border-slate-800/80 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-4 md:px-6 shadow-sm transition-colors">
             
             <!-- Left Area: Mobile Menu Toggle + Global Search -->
             <div class="flex items-center gap-4 flex-1 max-w-lg">
-                <button @click="mobileOpen = true" type="button" class="md:hidden p-2 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800">
+                <button @click="mobileOpen = true" type="button" class="md:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
 
                 <div class="relative w-full max-w-sm hidden sm:block">
-                    <svg class="absolute top-2.5 left-3 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="absolute top-2.5 left-3.5 h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                     <input 
                         type="text" 
                         placeholder="Search products, orders, customers..." 
-                        class="w-full pl-9 pr-4 h-9 bg-gray-50 dark:bg-gray-950/50 border border-gray-200 dark:border-gray-800 rounded-xl text-xs focus:outline-none focus:border-primary text-gray-900 dark:text-white"
+                        class="w-full pl-10 pr-4 h-9 bg-slate-100/70 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl text-xs focus:outline-none focus:border-emerald-500 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-colors"
                     />
                 </div>
             </div>
 
-            <!-- Right Area: Theme Toggle, Notifications, User Menu -->
-            <div class="flex items-center gap-2.5 sm:gap-3">
+            <!-- Right Area: Theme Switcher, Notifications, User Menu -->
+            <div class="flex items-center gap-2 sm:gap-3">
                 
-                <!-- Theme Switcher -->
+                <!-- Modern 3-Way Theme Switcher -->
                 <div x-data="{ open: false }" class="relative">
-                    <button @click="open = !open" type="button" class="h-9 w-9 flex items-center justify-center rounded-full text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <button 
+                        @click="open = !open" 
+                        type="button" 
+                        class="h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 transition-all shadow-sm"
+                        title="Change Theme"
+                    >
                         <template x-if="theme === 'light'">
-                            <svg class="h-5 w-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                            <svg class="h-4 w-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
                         </template>
                         <template x-if="theme === 'dark'">
-                            <svg class="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                            <svg class="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                            </svg>
                         </template>
                         <template x-if="theme === 'system'">
-                            <svg class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                            <svg class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
                         </template>
                     </button>
-                    <div x-show="open" @click.outside="open = false" x-cloak class="absolute right-0 mt-2 w-36 bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 py-1 z-50 text-xs">
-                        <button @click="setTheme('light'); open = false;" class="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 text-left">Light</button>
-                        <button @click="setTheme('dark'); open = false;" class="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 text-left">Dark</button>
-                        <button @click="setTheme('system'); open = false;" class="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 text-left">System</button>
+                    
+                    <div 
+                        x-show="open" 
+                        @click.outside="open = false" 
+                        x-cloak 
+                        x-transition:enter="transition ease-out duration-150"
+                        x-transition:enter-start="opacity-0 scale-95"
+                        x-transition:enter-end="opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-100"
+                        x-transition:leave-start="opacity-100 scale-100"
+                        x-transition:leave-end="opacity-0 scale-95"
+                        class="absolute right-0 mt-2 w-44 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 p-1.5 z-50 text-xs"
+                    >
+                        <div class="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Theme Mode</div>
+                        <button 
+                            @click="setTheme('light'); open = false;" 
+                            class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-left transition-colors font-medium"
+                            :class="theme === 'light' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'"
+                        >
+                            <span class="flex items-center gap-2.5">
+                                <svg class="h-4 w-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                                Light
+                            </span>
+                            <span x-show="theme === 'light'" class="text-emerald-600 dark:text-emerald-400 font-bold">✓</span>
+                        </button>
+                        
+                        <button 
+                            @click="setTheme('dark'); open = false;" 
+                            class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-left transition-colors font-medium"
+                            :class="theme === 'dark' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'"
+                        >
+                            <span class="flex items-center gap-2.5">
+                                <svg class="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                                Dark
+                            </span>
+                            <span x-show="theme === 'dark'" class="text-emerald-600 dark:text-emerald-400 font-bold">✓</span>
+                        </button>
+                        
+                        <button 
+                            @click="setTheme('system'); open = false;" 
+                            class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-left transition-colors font-medium"
+                            :class="theme === 'system' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'"
+                        >
+                            <span class="flex items-center gap-2.5">
+                                <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                System
+                            </span>
+                            <span x-show="theme === 'system'" class="text-emerald-600 dark:text-emerald-400 font-bold">✓</span>
+                        </button>
                     </div>
                 </div>
 
                 <!-- Messages Dropdown -->
                 <div x-data="{ open: false }" class="relative">
-                    <button @click="open = !open" type="button" class="relative h-9 w-9 flex items-center justify-center rounded-full text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    <button @click="open = !open" type="button" class="relative h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 transition-colors shadow-sm">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                         </svg>
                         @if($unreadMessagesCount > 0)
-                            <span class="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-red-500 text-[10px] text-white border-2 border-white dark:border-gray-900 rounded-full font-bold">
+                            <span class="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center bg-rose-500 text-[9px] text-white border-2 border-white dark:border-slate-900 rounded-full font-bold">
                                 {{ $unreadMessagesCount }}
                             </span>
                         @endif
                     </button>
-                    <div x-show="open" @click.outside="open = false" x-cloak class="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden z-50">
-                        <div class="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                    <div x-show="open" @click.outside="open = false" x-cloak class="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden z-50">
+                        <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                             <div>
-                                <h3 class="text-sm font-bold text-gray-900 dark:text-white">Messages</h3>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $unreadMessagesCount }} unread messages</p>
+                                <h3 class="text-sm font-bold text-slate-900 dark:text-white">Messages</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">{{ $unreadMessagesCount }} unread messages</p>
                             </div>
-                            <a href="{{ route('admin.messages.index') }}" class="text-xs font-semibold text-primary hover:underline">View All</a>
+                            <a href="{{ route('admin.messages.index') }}" class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline">View All</a>
                         </div>
-                        <div class="max-h-72 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800 text-xs">
+                        <div class="max-h-72 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800 text-xs">
                             @forelse($recentMessages as $msg)
-                                <a href="{{ route('admin.messages.index', ['id' => $msg->id]) }}" class="block p-3.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors {{ $msg->status === 'Unread' ? 'bg-blue-50/30 dark:bg-blue-950/15 border-l-4 border-l-blue-500' : '' }}">
+                                <a href="{{ route('admin.messages.index', ['id' => $msg->id]) }}" class="block p-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors {{ $msg->status === 'Unread' ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-l-4 border-l-emerald-500' : '' }}">
                                     <div class="flex items-center justify-between">
-                                        <span class="font-bold text-gray-900 dark:text-white">{{ $msg->name }}</span>
-                                        <span class="text-[10px] text-gray-400">{{ $msg->created_at ? $msg->created_at->diffForHumans() : '' }}</span>
+                                        <span class="font-bold text-slate-900 dark:text-white">{{ $msg->name }}</span>
+                                        <span class="text-[10px] text-slate-400">{{ $msg->created_at ? $msg->created_at->diffForHumans() : '' }}</span>
                                     </div>
-                                    <p class="font-semibold text-gray-700 dark:text-gray-300 truncate mt-0.5">{{ $msg->subject }}</p>
-                                    <p class="text-gray-500 dark:text-gray-400 line-clamp-1 mt-0.5">{{ $msg->message }}</p>
+                                    <p class="font-semibold text-slate-700 dark:text-slate-300 truncate mt-0.5">{{ $msg->subject }}</p>
+                                    <p class="text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">{{ $msg->message }}</p>
                                 </a>
                             @empty
-                                <div class="p-6 text-center text-gray-400">No new messages</div>
+                                <div class="p-6 text-center text-slate-400">No new messages</div>
                             @endforelse
                         </div>
                     </div>
@@ -643,41 +716,41 @@
 
                 <!-- Admin Approvals Dropdown -->
                 <div x-data="{ open: false }" class="relative">
-                    <button @click="open = !open" type="button" class="relative h-9 w-9 flex items-center justify-center rounded-full text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    <button @click="open = !open" type="button" class="relative h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 transition-colors shadow-sm">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                         </svg>
                         @if($pendingUsersCount > 0)
-                            <span class="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-primary text-[10px] text-white border-2 border-white dark:border-gray-900 rounded-full font-bold">
+                            <span class="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center bg-emerald-500 text-[9px] text-white border-2 border-white dark:border-slate-900 rounded-full font-bold">
                                 {{ $pendingUsersCount }}
                             </span>
                         @endif
                     </button>
-                    <div x-show="open" @click.outside="open = false" x-cloak class="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden z-50">
-                        <div class="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                    <div x-show="open" @click.outside="open = false" x-cloak class="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden z-50">
+                        <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                             <div>
-                                <h3 class="text-sm font-bold text-gray-900 dark:text-white">Admin Approvals</h3>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $pendingUsersCount }} pending requests</p>
+                                <h3 class="text-sm font-bold text-slate-900 dark:text-white">Admin Approvals</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">{{ $pendingUsersCount }} pending requests</p>
                             </div>
-                            <a href="{{ route('admin.users.index') }}" class="text-xs font-semibold text-primary hover:underline">View All</a>
+                            <a href="{{ route('admin.users.index') }}" class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline">View All</a>
                         </div>
-                        <div class="max-h-72 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800 text-xs">
+                        <div class="max-h-72 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800 text-xs">
                             @forelse($recentPendingUsers as $u)
-                                <div class="p-3.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 flex items-center justify-between gap-3">
+                                <div class="p-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 flex items-center justify-between gap-3">
                                     <div class="min-w-0">
-                                        <p class="font-bold text-gray-900 dark:text-white truncate">{{ $u->name }}</p>
-                                        <p class="text-gray-500 text-[11px] truncate">{{ $u->email }}</p>
+                                        <p class="font-bold text-slate-900 dark:text-white truncate">{{ $u->name }}</p>
+                                        <p class="text-slate-500 text-[11px] truncate">{{ $u->email }}</p>
                                     </div>
                                     <form method="POST" action="{{ route('admin.users.update-status', $u->id) }}">
                                         @csrf
                                         <input type="hidden" name="status" value="active">
-                                        <button type="submit" class="px-2.5 py-1 bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400 border border-green-200 dark:border-green-800 rounded-lg text-xs font-bold hover:bg-green-100 transition-colors">
+                                        <button type="submit" class="px-3 py-1 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs font-bold hover:bg-emerald-100 transition-colors">
                                             Approve
                                         </button>
                                     </form>
                                 </div>
                             @empty
-                                <div class="p-6 text-center text-gray-400">No pending approvals</div>
+                                <div class="p-6 text-center text-slate-400">No pending approvals</div>
                             @endforelse
                         </div>
                     </div>
@@ -685,36 +758,36 @@
 
                 <!-- Notifications (Pending Orders) -->
                 <div x-data="{ open: false }" class="relative">
-                    <button @click="open = !open" type="button" class="relative h-9 w-9 flex items-center justify-center rounded-full text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    <button @click="open = !open" type="button" class="relative h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 transition-colors shadow-sm">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                         </svg>
                         @if($pendingOrdersCount > 0)
-                            <span class="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-primary text-[10px] text-white border-2 border-white dark:border-gray-900 rounded-full font-bold">
+                            <span class="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center bg-emerald-500 text-[9px] text-white border-2 border-white dark:border-slate-900 rounded-full font-bold">
                                 {{ $pendingOrdersCount }}
                             </span>
                         @endif
                     </button>
-                    <div x-show="open" @click.outside="open = false" x-cloak class="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden z-50">
-                        <div class="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                    <div x-show="open" @click.outside="open = false" x-cloak class="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden z-50">
+                        <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                             <div>
-                                <h3 class="text-sm font-bold text-gray-900 dark:text-white">Notifications</h3>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $pendingOrdersCount }} pending orders</p>
+                                <h3 class="text-sm font-bold text-slate-900 dark:text-white">Notifications</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">{{ $pendingOrdersCount }} pending orders</p>
                             </div>
-                            <a href="{{ route('admin.orders.index') }}" class="text-xs font-semibold text-primary hover:underline">View All</a>
+                            <a href="{{ route('admin.orders.index') }}" class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline">View All</a>
                         </div>
-                        <div class="max-h-72 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800 text-xs">
+                        <div class="max-h-72 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800 text-xs">
                             @forelse($recentPendingOrders as $order)
-                                <a href="{{ route('admin.orders.show', $order->id) }}" class="block p-3.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                                <a href="{{ route('admin.orders.show', $order->id) }}" class="block p-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                     <div class="flex items-center justify-between">
-                                        <span class="font-bold text-gray-900 dark:text-white">Order #{{ $order->order_number }}</span>
-                                        <span class="font-bold text-primary">৳{{ number_format($order->total, 2) }}</span>
+                                        <span class="font-bold text-slate-900 dark:text-white">Order #{{ $order->order_number }}</span>
+                                        <span class="font-bold text-emerald-600 dark:text-emerald-400">৳{{ number_format($order->total, 2) }}</span>
                                     </div>
-                                    <p class="text-gray-500 mt-0.5">{{ $order->customer_name ?? 'Customer' }} ({{ $order->customer_phone ?? 'N/A' }})</p>
-                                    <span class="inline-block mt-1 px-2 py-0.5 bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400 rounded-full text-[10px] font-bold">Pending</span>
+                                    <p class="text-slate-500 dark:text-slate-400 mt-0.5">{{ $order->customer_name ?? 'Customer' }} ({{ $order->customer_phone ?? 'N/A' }})</p>
+                                    <span class="inline-block mt-1 px-2 py-0.5 bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-400 rounded-full text-[10px] font-bold border border-amber-200 dark:border-amber-800">Pending</span>
                                 </a>
                             @empty
-                                <div class="p-6 text-center text-gray-400">No new order notifications</div>
+                                <div class="p-6 text-center text-slate-400">No new order notifications</div>
                             @endforelse
                         </div>
                     </div>
@@ -722,30 +795,30 @@
 
                 <!-- Admin Profile Menu -->
                 <div x-data="{ open: false }" class="relative ml-1">
-                    <button @click="open = !open" type="button" class="flex items-center gap-2 pl-2 pr-3 h-9 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                        <div class="flex h-7 w-7 items-center justify-center rounded-full bg-primary/15 text-primary font-bold text-xs">
+                    <button @click="open = !open" type="button" class="flex items-center gap-2 pl-2 pr-3 h-9 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 transition-colors shadow-sm">
+                        <div class="flex h-6 w-6 items-center justify-center rounded-lg bg-emerald-600 text-white font-bold text-xs">
                             {{ strtoupper(substr($currentUser->name ?? 'A', 0, 1)) }}
                         </div>
-                        <span class="text-xs font-semibold text-gray-800 dark:text-gray-200 hidden sm:inline-block">
+                        <span class="text-xs font-semibold text-slate-800 dark:text-slate-200 hidden sm:inline-block">
                             {{ $currentUser->name ?? 'Administrator' }}
                         </span>
-                        <svg class="h-3.5 w-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg class="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <div x-show="open" @click.outside="open = false" x-cloak class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 py-2 z-50">
-                        <div class="px-4 py-2.5 border-b border-gray-100 dark:border-gray-800">
-                            <p class="text-xs font-bold text-gray-900 dark:text-white truncate">{{ $currentUser->name ?? 'Admin' }}</p>
-                            <p class="text-[11px] text-gray-500 truncate">{{ $currentUser->email ?? 'admin@shoukhin.com' }}</p>
+                    <div x-show="open" @click.outside="open = false" x-cloak class="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 py-2 z-50">
+                        <div class="px-4 py-2.5 border-b border-slate-100 dark:border-slate-800">
+                            <p class="text-xs font-bold text-slate-900 dark:text-white truncate">{{ $currentUser->name ?? 'Admin' }}</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">{{ $currentUser->email ?? 'admin@shoukhin.com' }}</p>
                         </div>
-                        <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-2 px-4 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
-                            <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                        <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-2 px-4 py-2 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">
+                            <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                             Profile & Settings
                         </a>
-                        <div class="border-t border-gray-100 dark:border-gray-800 my-1"></div>
+                        <div class="border-t border-slate-100 dark:border-slate-800 my-1"></div>
                         <form method="POST" action="{{ route('admin.logout') }}">
                             @csrf
-                            <button type="submit" class="w-full flex items-center gap-2 px-4 py-2 text-xs text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 text-left">
+                            <button type="submit" class="w-full flex items-center gap-2 px-4 py-2 text-xs text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-left">
                                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                                 Logout
                             </button>
@@ -758,26 +831,26 @@
 
         <!-- FLASH NOTIFICATIONS -->
         @if(session('success'))
-            <div class="mx-4 md:mx-8 mt-4 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 flex items-center justify-between text-emerald-800 dark:text-emerald-300 text-sm">
+            <div class="mx-4 md:mx-8 mt-4 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 flex items-center justify-between text-emerald-800 dark:text-emerald-300 text-sm shadow-sm">
                 <div class="flex items-center gap-2.5 font-medium">
-                    <svg class="h-5 w-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="h-5 w-5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     {{ session('success') }}
                 </div>
-                <button type="button" @click="$el.parentElement.remove()" class="text-emerald-500 hover:text-emerald-800">&times;</button>
+                <button type="button" @click="$el.parentElement.remove()" class="text-emerald-500 hover:text-emerald-800 dark:hover:text-emerald-200">&times;</button>
             </div>
         @endif
 
         @if(session('error'))
-            <div class="mx-4 md:mx-8 mt-4 p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 flex items-center justify-between text-rose-800 dark:text-rose-300 text-sm">
+            <div class="mx-4 md:mx-8 mt-4 p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 flex items-center justify-between text-rose-800 dark:text-rose-300 text-sm shadow-sm">
                 <div class="flex items-center gap-2.5 font-medium">
-                    <svg class="h-5 w-5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="h-5 w-5 text-rose-600 dark:text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     {{ session('error') }}
                 </div>
-                <button type="button" @click="$el.parentElement.remove()" class="text-rose-500 hover:text-rose-800">&times;</button>
+                <button type="button" @click="$el.parentElement.remove()" class="text-rose-500 hover:text-rose-800 dark:hover:text-rose-200">&times;</button>
             </div>
         @endif
 
