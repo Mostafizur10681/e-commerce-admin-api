@@ -17,9 +17,17 @@ class SubscriptionController extends Controller
             $query->where('email', 'like', "%{$s}%");
         }
 
-        $subscriptions = $query->latest()->paginate(20)->withQueryString();
+        $perPage = $request->input('per_page', 20);
+        $subscriptions = $query->latest()->paginate($perPage)->withQueryString();
 
-        return view('admin.subscriptions.index', compact('subscriptions'));
+        $stats = [
+            'total' => Subscription::count(),
+            'today' => Subscription::whereDate('created_at', today())->count(),
+            'this_week' => Subscription::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count(),
+            'this_month' => Subscription::whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count(),
+        ];
+
+        return view('admin.subscriptions.index', compact('subscriptions', 'stats'));
     }
 
     public function destroy($id)

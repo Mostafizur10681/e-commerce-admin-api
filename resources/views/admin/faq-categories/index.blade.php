@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="space-y-6 max-w-5xl mx-auto pb-16">
+<div class="space-y-6 pb-16">
 
     <!-- Breadcrumbs & Page Header -->
     <div class="space-y-1">
