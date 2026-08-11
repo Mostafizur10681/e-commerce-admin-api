@@ -6,7 +6,7 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.3",
+        "php": "^8.2",
         "cviebrock/eloquent-sluggable": "^13.0",
         "intervention/image": "^4.1",
         "laravel/framework": "^13.8",

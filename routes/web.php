@@ -47,6 +47,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         // Products
+        Route::delete('/products/images/{id}', [ProductController::class, 'deleteImageItem'])->name('products.images.delete');
         Route::post('/products/{id}/toggle-status', [ProductController::class, 'toggleStatus'])->name('products.toggle-status');
         Route::resource('products', ProductController::class);
 
@@ -60,14 +61,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Orders & Order Statuses
         Route::get('/orders/payment-status', [OrderController::class, 'paymentStatus'])->name('orders.payment-status');
         Route::post('/orders/payment-status', [OrderController::class, 'storePaymentStatus'])->name('orders.payment-status.store');
+        Route::put('/orders/payment-status/{id}', [OrderController::class, 'updatePaymentStatus'])->name('orders.payment-status.update');
+        Route::delete('/orders/payment-status/{id}', [OrderController::class, 'destroyPaymentStatus'])->name('orders.payment-status.destroy');
+
         Route::get('/orders/order-status', [OrderController::class, 'orderStatus'])->name('orders.order-status');
         Route::post('/orders/order-status', [OrderController::class, 'storeOrderStatus'])->name('orders.order-status.store');
+        Route::put('/orders/order-status/{id}', [OrderController::class, 'updateOrderStatus'])->name('orders.order-status.update');
+        Route::delete('/orders/order-status/{id}', [OrderController::class, 'destroyOrderStatus'])->name('orders.order-status.destroy');
+
         Route::patch('/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
         Route::resource('orders', OrderController::class)->only(['index', 'show']);
 
         // Customers
         Route::post('/customers/{id}/toggle-block', [CustomerController::class, 'toggleBlock'])->name('customers.toggle-block');
-        Route::resource('customers', CustomerController::class)->only(['index', 'show', 'create', 'store']);
+        Route::resource('customers', CustomerController::class)->only(['index', 'show', 'create', 'store', 'destroy']);
 
         // Partners & Brands
         Route::resource('partners', PartnerController::class);

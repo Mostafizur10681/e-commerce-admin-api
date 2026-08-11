@@ -23,7 +23,7 @@
 
             <div>
                 <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Copyright Notice</label>
-                <input type="text" name="copyright_text" value="{{ old('copyright_text', $footer->copyright_text ?? '© ' . date('Y') . ' Shoukhin Fashion. All rights reserved.') }}" class="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-primary">
+                <input type="text" name="copyright_text" value="{{ old('copyright_text', $footer->copyright_text ?? '© ' . date('Y') . ' Shopia. All rights reserved.') }}" class="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-primary">
             </div>
 
             <div class="space-y-3 pt-2">
@@ -31,22 +31,22 @@
                 
                 <div>
                     <label class="block text-xs font-medium text-gray-500 mb-1">Facebook URL</label>
-                    <input type="url" name="facebook_url" value="{{ old('facebook_url', $footer->facebook_url) }}" placeholder="https://facebook.com/shoukhin" class="w-full px-3.5 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-primary">
+                    <input type="url" name="facebook_url" value="{{ old('facebook_url', $footer->facebook_url) }}" placeholder="https://facebook.com/shopia" class="w-full px-3.5 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-primary">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Instagram URL</label>
-                    <input type="url" name="instagram_url" value="{{ old('instagram_url', $footer->instagram_url) }}" placeholder="https://instagram.com/shoukhin" class="w-full px-3.5 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-primary">
+                    <label class="block font-semibold text-gray-700 dark:text-gray-300 mb-1">Instagram URL</label>
+                    <input type="url" name="instagram_url" value="{{ old('instagram_url', $footer->instagram_url) }}" placeholder="https://instagram.com/shopia" class="w-full px-3.5 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-primary">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Twitter / X URL</label>
-                    <input type="url" name="twitter_url" value="{{ old('twitter_url', $footer->twitter_url) }}" placeholder="https://twitter.com/shoukhin" class="w-full px-3.5 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-primary">
+                    <label class="block font-semibold text-gray-700 dark:text-gray-300 mb-1">Twitter (X) URL</label>
+                    <input type="url" name="twitter_url" value="{{ old('twitter_url', $footer->twitter_url) }}" placeholder="https://twitter.com/shopia" class="w-full px-3.5 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-primary">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-gray-500 mb-1">YouTube URL</label>
-                    <input type="url" name="youtube_url" value="{{ old('youtube_url', $footer->youtube_url) }}" placeholder="https://youtube.com/shoukhin" class="w-full px-3.5 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-primary">
+                    <label class="block font-semibold text-gray-700 dark:text-gray-300 mb-1">YouTube URL</label>
+                    <input type="url" name="youtube_url" value="{{ old('youtube_url', $footer->youtube_url) }}" placeholder="https://youtube.com/shopia" class="w-full px-3.5 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-primary">
                 </div>
             </div>
 

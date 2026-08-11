@@ -79,7 +79,7 @@ class OrderController extends Controller
 
     public function paymentStatus()
     {
-        $statuses = PaymentStatus::all();
+        $statuses = PaymentStatus::latest()->paginate(15);
         return view('admin.orders.payment-status', compact('statuses'));
     }
 
@@ -87,6 +87,7 @@ class OrderController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255|unique:payment_statuses,name',
+            'description' => 'nullable|string|max:500',
             'status' => 'required|string|in:active,inactive',
         ]);
 
@@ -95,9 +96,32 @@ class OrderController extends Controller
         return redirect()->route('admin.orders.payment-status')->with('success', 'Payment status created successfully!');
     }
 
+    public function updatePaymentStatus(Request $request, $id)
+    {
+        $status = PaymentStatus::findOrFail($id);
+
+        $data = $request->validate([
+            'name' => 'required|string|max:255|unique:payment_statuses,name,' . $status->id,
+            'description' => 'nullable|string|max:500',
+            'status' => 'required|string|in:active,inactive',
+        ]);
+
+        $status->update($data);
+
+        return redirect()->route('admin.orders.payment-status')->with('success', 'Payment status updated successfully!');
+    }
+
+    public function destroyPaymentStatus($id)
+    {
+        $status = PaymentStatus::findOrFail($id);
+        $status->delete();
+
+        return redirect()->route('admin.orders.payment-status')->with('success', 'Payment status deleted successfully!');
+    }
+
     public function orderStatus()
     {
-        $statuses = OrderStatus::all();
+        $statuses = OrderStatus::latest()->paginate(15);
         return view('admin.orders.order-status', compact('statuses'));
     }
 
@@ -105,11 +129,35 @@ class OrderController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255|unique:order_statuses,name',
+            'description' => 'nullable|string|max:500',
             'status' => 'required|string|in:active,inactive',
         ]);
 
         OrderStatus::create($data);
 
         return redirect()->route('admin.orders.order-status')->with('success', 'Order status created successfully!');
+    }
+
+    public function updateOrderStatus(Request $request, $id)
+    {
+        $status = OrderStatus::findOrFail($id);
+
+        $data = $request->validate([
+            'name' => 'required|string|max:255|unique:order_statuses,name,' . $status->id,
+            'description' => 'nullable|string|max:500',
+            'status' => 'required|string|in:active,inactive',
+        ]);
+
+        $status->update($data);
+
+        return redirect()->route('admin.orders.order-status')->with('success', 'Order status updated successfully!');
+    }
+
+    public function destroyOrderStatus($id)
+    {
+        $status = OrderStatus::findOrFail($id);
+        $status->delete();
+
+        return redirect()->route('admin.orders.order-status')->with('success', 'Order status deleted successfully!');
     }
 }

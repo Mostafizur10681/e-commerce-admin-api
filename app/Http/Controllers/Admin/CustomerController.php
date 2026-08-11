@@ -13,14 +13,19 @@ class CustomerController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::where('role', 'customer')->withCount('orders');
+        $query = User::where('role', 'customer')
+            ->withCount('orders')
+            ->withSum(['orders' => function($q) {
+                $q->where('status', '!=', 'cancelled');
+            }], 'total');
 
         if ($request->filled('search')) {
             $s = $request->search;
             $query->where(function ($q) use ($s) {
                 $q->where('name', 'like', "%{$s}%")
                   ->orWhere('email', 'like', "%{$s}%")
-                  ->orWhere('phone', 'like', "%{$s}%");
+                  ->orWhere('phone', 'like', "%{$s}%")
+                  ->orWhere('id', 'like', "%{$s}%");
             });
         }
 
@@ -28,9 +33,17 @@ class CustomerController extends Controller
             $query->where('status', $request->status);
         }
 
-        $customers = $query->latest()->paginate(15)->withQueryString();
+        $perPage = $request->input('per_page', 10);
+        $customers = $query->latest()->paginate($perPage)->withQueryString();
 
-        return view('admin.customers.index', compact('customers'));
+        $stats = [
+            'total' => User::where('role', 'customer')->count(),
+            'active' => User::where('role', 'customer')->where('status', 'active')->count(),
+            'blocked' => User::where('role', 'customer')->where('status', 'blocked')->count(),
+            'total_orders' => Order::whereHas('user', function($q) { $q->where('role', 'customer'); })->count(),
+        ];
+
+        return view('admin.customers.index', compact('customers', 'stats'));
     }
 
     public function show($id)
@@ -51,7 +64,7 @@ class CustomerController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'phone' => 'required|string|max:30|unique:users,phone',
+            'phone' => 'nullable|string|max:30|unique:users,phone',
             'password' => 'required|string|min:6',
             'status' => 'required|in:active,blocked',
         ]);
@@ -71,5 +84,13 @@ class CustomerController extends Controller
         $customer->save();
 
         return back()->with('success', 'Customer status updated to ' . $customer->status);
+    }
+
+    public function destroy($id)
+    {
+        $customer = User::where('role', 'customer')->findOrFail($id);
+        $customer->delete();
+
+        return redirect()->route('admin.customers.index')->with('success', 'Customer deleted successfully!');
     }
 }

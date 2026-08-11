@@ -12,13 +12,16 @@ class ReviewController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Review::with(['product', 'user']);
+        $query = Review::with(['product.images', 'user']);
 
         if ($request->filled('search')) {
             $s = $request->search;
             $query->where(function ($q) use ($s) {
                 $q->where('comment', 'like', "%{$s}%")
-                  ->orWhere('author_name', 'like', "%{$s}%");
+                  ->orWhere('author_name', 'like', "%{$s}%")
+                  ->orWhereHas('product', function ($pq) use ($s) {
+                      $pq->where('name', 'like', "%{$s}%");
+                  });
             });
         }
 
@@ -30,9 +33,17 @@ class ReviewController extends Controller
             $query->where('status', $request->status);
         }
 
-        $reviews = $query->latest()->paginate(15)->withQueryString();
+        $perPage = $request->input('per_page', 10);
+        $reviews = $query->latest()->paginate($perPage)->withQueryString();
 
-        return view('admin.reviews.index', compact('reviews'));
+        $stats = [
+            'total' => Review::count(),
+            'approved' => Review::where('status', 'approved')->count(),
+            'pending' => Review::where('status', 'pending')->count(),
+            'avg_rating' => round(Review::avg('rating') ?: 5.0, 1),
+        ];
+
+        return view('admin.reviews.index', compact('reviews', 'stats'));
     }
 
     public function create()

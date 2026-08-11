@@ -20,9 +20,20 @@ class PartnerController extends Controller
             $query->where('name', 'like', "%{$s}%")->orWhere('website', 'like', "%{$s}%");
         }
 
-        $partners = $query->latest()->paginate(15)->withQueryString();
+        if ($request->filled('status')) {
+            $query->where('status', $request->status === 'active' ? 1 : 0);
+        }
 
-        return view('admin.partners.index', compact('partners'));
+        $perPage = $request->input('per_page', 12);
+        $partners = $query->latest()->paginate($perPage)->withQueryString();
+
+        $stats = [
+            'total' => Partner::count(),
+            'active' => Partner::where('status', 1)->count(),
+            'inactive' => Partner::where('status', 0)->count(),
+        ];
+
+        return view('admin.partners.index', compact('partners', 'stats'));
     }
 
     public function create()
@@ -35,9 +46,11 @@ class PartnerController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'website' => 'nullable|url|max:255',
-            'logo' => 'required|image|mimes:jpeg,png,jpg,webp,svg|max:5120',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:5120',
             'status' => 'required|in:active,inactive',
         ]);
+
+        $data['status'] = $data['status'] === 'active' ? 1 : 0;
 
         if ($request->hasFile('logo')) {
             $data['logo'] = $this->uploadImage($request->file('logo'), 'partners');
@@ -64,6 +77,8 @@ class PartnerController extends Controller
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:5120',
             'status' => 'required|in:active,inactive',
         ]);
+
+        $data['status'] = $data['status'] === 'active' ? 1 : 0;
 
         if ($request->hasFile('logo')) {
             if ($partner->logo) {

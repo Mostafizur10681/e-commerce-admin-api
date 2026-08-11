@@ -17,6 +17,7 @@ class MessageController extends Controller
             $query->where(function ($q) use ($s) {
                 $q->where('name', 'like', "%{$s}%")
                   ->orWhere('email', 'like', "%{$s}%")
+                  ->orWhere('phone', 'like', "%{$s}%")
                   ->orWhere('subject', 'like', "%{$s}%")
                   ->orWhere('message', 'like', "%{$s}%");
             });
@@ -26,27 +27,23 @@ class MessageController extends Controller
             $query->where('status', $request->status);
         }
 
-        $messages = $query->latest()->paginate(15)->withQueryString();
+        $perPage = $request->input('per_page', 10);
+        $messages = $query->latest()->paginate($perPage)->withQueryString();
 
-        $unreadCount = ContactMessage::where('status', 'Unread')->count();
-        $totalCount = ContactMessage::count();
+        $stats = [
+            'total' => ContactMessage::count(),
+            'unread' => ContactMessage::where('status', 'Unread')->count(),
+            'read' => ContactMessage::where('status', 'Read')->count(),
+            'replied' => ContactMessage::where('status', 'Replied')->count(),
+        ];
 
-        // Selected active message to view in drawer
-        $activeMessage = null;
-        if ($request->filled('id')) {
-            $activeMessage = ContactMessage::find($request->id);
-            if ($activeMessage && $activeMessage->status === 'Unread') {
-                $activeMessage->update(['status' => 'Read']);
-            }
-        }
-
-        return view('admin.messages.index', compact('messages', 'unreadCount', 'totalCount', 'activeMessage'));
+        return view('admin.messages.index', compact('messages', 'stats'));
     }
 
     public function toggleStatus($id)
     {
         $msg = ContactMessage::findOrFail($id);
-        $msg->status = $msg->status === 'Read' ? 'Unread' : 'Read';
+        $msg->status = ($msg->status === 'Read' || $msg->status === 'Replied') ? 'Unread' : 'Read';
         $msg->save();
 
         return back()->with('success', 'Message marked as ' . $msg->status);
@@ -55,7 +52,7 @@ class MessageController extends Controller
     public function markAllAsRead()
     {
         ContactMessage::where('status', 'Unread')->update(['status' => 'Read']);
-        return back()->with('success', 'All messages marked as read.');
+        return back()->with('success', 'All inquiries marked as read.');
     }
 
     public function destroy($id)

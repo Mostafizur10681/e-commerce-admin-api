@@ -18,9 +18,13 @@ class Product extends Model
         'slug',
         'description',
         'short_description',
+        'additional_info',
         'price',
         'sale_price',
-        'SKU',
+        'cost_price',
+        'sku',
+        'barcode',
+        'color',
         'stock',
         'status',
         'category_id',
@@ -46,8 +50,9 @@ class Product extends Model
         return [
             'price' => 'decimal:2',
             'sale_price' => 'decimal:2',
+            'cost_price' => 'decimal:2',
             'stock' => 'integer',
-            'status' => 'boolean',
+            'status' => 'string',
             'tax' => 'decimal:2',
             'discount' => 'decimal:2',
             'featured' => 'boolean',
@@ -70,7 +75,7 @@ class Product extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['name', 'description', 'price', 'sale_price', 'SKU', 'stock', 'status', 'category_id', 'sub_category_id'])
+            ->logOnly(['name', 'description', 'price', 'sale_price', 'sku', 'stock', 'status', 'category_id', 'sub_category_id'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
     }

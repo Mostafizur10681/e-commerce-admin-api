@@ -22,9 +22,12 @@ class ProductController extends Controller
         $query = Product::with(['category', 'subCategory', 'images']);
 
         if ($request->filled('search')) {
-            $s = $request->search;
+            $s = trim($request->search);
             $query->where(function ($q) use ($s) {
-                $q->where('name', 'like', "%{$s}%")
+                if (is_numeric($s)) {
+                    $q->where('id', $s);
+                }
+                $q->orWhere('name', 'like', "%{$s}%")
                   ->orWhere('sku', 'like', "%{$s}%")
                   ->orWhere('description', 'like', "%{$s}%");
             });
@@ -42,8 +45,24 @@ class ProductController extends Controller
             $query->where('stock_status', $request->stock_status);
         }
 
-        $products = $query->latest()->paginate(15)->withQueryString();
-        $categories = Category::all();
+        // Sorting
+        $sort = $request->get('sort', 'latest');
+        match ($sort) {
+            'name_asc' => $query->orderBy('name', 'asc'),
+            'name_desc' => $query->orderBy('name', 'desc'),
+            'price_low_high' => $query->orderBy('price', 'asc'),
+            'price_high_low' => $query->orderBy('price', 'desc'),
+            'oldest' => $query->orderBy('id', 'asc'),
+            default => $query->latest(),
+        };
+
+        $perPage = (int) $request->get('per_page', 10);
+        if (!in_array($perPage, [10, 25, 50, 100])) {
+            $perPage = 10;
+        }
+
+        $products = $query->paginate($perPage)->withQueryString();
+        $categories = Category::orderBy('name')->get();
 
         return view('admin.products.index', compact('products', 'categories'));
     }
@@ -55,7 +74,11 @@ class ProductController extends Controller
         $brands = Brand::all();
         $attributes = Attribute::all();
 
-        return view('admin.products.create', compact('categories', 'subCategories', 'brands', 'attributes'));
+        do {
+            $generatedSku = 'SKU-' . strtoupper(Str::random(8));
+        } while (Product::where('sku', $generatedSku)->exists());
+
+        return view('admin.products.create', compact('categories', 'subCategories', 'brands', 'attributes', 'generatedSku'));
     }
 
     public function store(Request $request)
@@ -65,6 +88,7 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
             'sub_category_id' => 'nullable|exists:sub_categories,id',
             'brand' => 'nullable|string|max:255',
+            'color' => 'nullable|string|max:100',
             'price' => 'required|numeric|min:0',
             'sale_price' => 'nullable|numeric|min:0',
             'cost_price' => 'nullable|numeric|min:0',
@@ -82,6 +106,7 @@ class ProductController extends Controller
             'organic' => 'nullable|boolean',
             'short_description' => 'nullable|string',
             'description' => 'nullable|string',
+            'additional_info' => 'nullable|string',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
             'meta_keywords' => 'nullable|string',
@@ -90,6 +115,20 @@ class ProductController extends Controller
         ]);
 
         $data['slug'] = Str::slug($data['name']) . '-' . Str::random(5);
+        
+        // Auto-generate unique SKU based on product name
+        $baseSku = !empty($data['sku']) ? Str::upper(Str::slug($data['sku'])) : Str::upper(Str::slug($data['name']));
+        if (empty($baseSku)) {
+            $baseSku = 'SKU';
+        }
+        $baseSku = substr($baseSku, 0, 30);
+        $sku = $baseSku . '-' . strtoupper(Str::random(4));
+        while (Product::where('sku', $sku)->exists()) {
+            $sku = $baseSku . '-' . strtoupper(Str::random(5));
+        }
+        $data['sku'] = $sku;
+        
+        unset($data['SKU']);
         $data['featured'] = $request->has('featured');
         $data['best_seller'] = $request->has('best_seller');
         $data['new_arrival'] = $request->has('new_arrival');
@@ -147,6 +186,7 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
             'sub_category_id' => 'nullable|exists:sub_categories,id',
             'brand' => 'nullable|string|max:255',
+            'color' => 'nullable|string|max:100',
             'price' => 'required|numeric|min:0',
             'sale_price' => 'nullable|numeric|min:0',
             'cost_price' => 'nullable|numeric|min:0',
@@ -164,6 +204,7 @@ class ProductController extends Controller
             'organic' => 'nullable|boolean',
             'short_description' => 'nullable|string',
             'description' => 'nullable|string',
+            'additional_info' => 'nullable|string',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
             'meta_keywords' => 'nullable|string',
@@ -171,6 +212,19 @@ class ProductController extends Controller
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
         ]);
 
+        // Auto-generate unique SKU based on product name if needed
+        $baseSku = !empty($data['sku']) ? Str::upper(Str::slug($data['sku'])) : Str::upper(Str::slug($data['name']));
+        if (empty($baseSku)) {
+            $baseSku = 'SKU';
+        }
+        $baseSku = substr($baseSku, 0, 30);
+        $sku = $baseSku . '-' . strtoupper(Str::random(4));
+        while (Product::where('sku', $sku)->where('id', '!=', $product->id)->exists()) {
+            $sku = $baseSku . '-' . strtoupper(Str::random(5));
+        }
+        $data['sku'] = $sku;
+
+        unset($data['SKU']);
         $data['featured'] = $request->has('featured');
         $data['best_seller'] = $request->has('best_seller');
         $data['new_arrival'] = $request->has('new_arrival');
@@ -213,6 +267,16 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect()->route('admin.products.index')->with('success', 'Product deleted successfully!');
+    }
+
+    public function deleteImageItem($imageId)
+    {
+        $image = ProductImage::findOrFail($imageId);
+        $this->deleteImage($image->image_path);
+        $productId = $image->product_id;
+        $image->delete();
+
+        return response()->json(['success' => true, 'message' => 'Image removed']);
     }
 
     public function toggleStatus($id)

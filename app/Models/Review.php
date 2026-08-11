@@ -15,6 +15,8 @@ class Review extends Model
     protected $fillable = [
         'product_id',
         'user_id',
+        'author_name',
+        'author_designation',
         'rating',
         'comment',
         'status',
@@ -25,14 +27,14 @@ class Review extends Model
     {
         return [
             'rating' => 'integer',
-            'status' => 'boolean',
+            'status' => 'string',
         ];
     }
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['product_id', 'user_id', 'rating', 'status'])
+            ->logOnly(['product_id', 'user_id', 'author_name', 'rating', 'status'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
     }

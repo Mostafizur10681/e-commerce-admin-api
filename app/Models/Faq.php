@@ -45,6 +45,6 @@ class Faq extends Model
 
     public function getFaqCategoryIdAttribute()
     {
-        return $this->category?->id;
+        return $this->faqCategory?->id;
     }
 }

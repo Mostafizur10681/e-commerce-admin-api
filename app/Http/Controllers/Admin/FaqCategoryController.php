@@ -28,6 +28,7 @@ class FaqCategoryController extends Controller
         ]);
 
         $data['slug'] = Str::slug($data['name']);
+        $data['status'] = $data['status'] === 'active' ? 1 : 0;
 
         FaqCategory::create($data);
 
@@ -50,6 +51,7 @@ class FaqCategoryController extends Controller
         ]);
 
         $data['slug'] = Str::slug($data['name']);
+        $data['status'] = $data['status'] === 'active' ? 1 : 0;
 
         $category->update($data);
 

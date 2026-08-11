@@ -32,13 +32,13 @@ class AttributeController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'type' => 'required|string|max:50',
             'values' => 'required|array|min:1',
             'values.*' => 'required|string|max:255',
         ]);
 
-        $data['slug'] = Str::slug($data['name']);
-        // Ensure values are stored cleanly as json
+        $data['code'] = Str::slug($data['name']);
+        $data['type'] = 'text';
+        // Ensure values are stored cleanly as array
         $data['values'] = array_values(array_unique(array_filter($data['values'])));
 
         Attribute::create($data);
@@ -58,12 +58,12 @@ class AttributeController extends Controller
 
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'type' => 'required|string|max:50',
             'values' => 'required|array|min:1',
             'values.*' => 'required|string|max:255',
         ]);
 
-        $data['slug'] = Str::slug($data['name']);
+        $data['code'] = Str::slug($data['name']);
+        $data['type'] = 'text';
         $data['values'] = array_values(array_unique(array_filter($data['values'])));
 
         $attribute->update($data);

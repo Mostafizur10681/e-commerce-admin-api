@@ -21,7 +21,7 @@
             <div class="space-y-3 text-xs">
                 <div>
                     <label class="block font-semibold text-gray-700 dark:text-gray-300 mb-1">Store Name</label>
-                    <input type="text" value="Shoukhin Fashion" readonly class="w-full px-3.5 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-gray-600 dark:text-gray-300 font-medium">
+                    <input type="text" value="Shopia" readonly class="w-full px-3.5 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-gray-600 dark:text-gray-300 font-medium">
                 </div>
 
                 <div>
