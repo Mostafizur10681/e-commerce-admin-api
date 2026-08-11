@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'Admin Portal' }} — Shopia Admin Portal</title>
+    <title>{{ $title ?? 'Admin Portal' }} — Shopiabd Admin Portal</title>
     
     <!-- Anti-FOUC Theme Initializer -->
     <script>
@@ -111,7 +111,7 @@
 
     <!-- Footer Copyright -->
     <footer class="mt-8 text-center text-xs text-slate-400 dark:text-slate-500 relative z-10">
-        &copy; {{ date('Y') }} Shopia Admin Portal. All rights reserved.
+        &copy; {{ date('Y') }} Shopiabd Admin Portal. All rights reserved.
     </footer>
 
 </body>
