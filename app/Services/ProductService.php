@@ -32,6 +32,9 @@ class ProductService
 
     public function getProductById(int|string $id, array $relations = ['category']): ?Model
     {
+        if (!is_numeric($id)) {
+            return \App\Models\Product::with(array_merge($relations, ['images']))->where('slug', $id)->firstOrFail();
+        }
         return $this->productRepository->findOrFail($id, ['*'], array_merge($relations, ['images']));
     }
 

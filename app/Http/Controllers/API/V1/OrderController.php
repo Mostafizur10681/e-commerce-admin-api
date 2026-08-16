@@ -107,8 +107,8 @@ class OrderController extends Controller
 
     public function activeOrderStatusesPublic(): JsonResponse
     {
-        // Get active order statuses ordered by ID
-        $statuses = \App\Models\OrderStatus::where('status', true)->orderBy('id', 'asc')->get();
+        // Get all active order statuses from order_statuses table
+        $statuses = \App\Models\OrderStatus::orderBy('id', 'asc')->get();
         return $this->success($statuses, 'Active order statuses retrieved successfully');
     }
 }

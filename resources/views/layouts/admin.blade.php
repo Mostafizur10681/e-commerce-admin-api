@@ -12,7 +12,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'Admin Panel' }} — Shopiabd Admin Portal</title>
+    <title>{{ $title ?? 'Admin Panel' }} — Shoukhin Fashion Admin Portal</title>
     
     <!-- Anti-FOUC Theme Initializer -->
     <script>
@@ -61,7 +61,7 @@
                     </svg>
                 </div>
                 <div x-show="!sidebarCollapsed" class="flex flex-col">
-                    <span class="tracking-tight text-slate-900 dark:text-white font-bold leading-tight truncate">Shopiabd</span>
+                    <span class="tracking-tight text-slate-900 dark:text-white font-bold leading-tight truncate">Shoukhin Fashion</span>
                     <span class="text-[10px] text-slate-500 dark:text-slate-400 font-semibold tracking-wider uppercase">Admin Portal</span>
                 </div>
             </a>
@@ -549,7 +549,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
                     </svg>
                 </div>
-                <span class="text-slate-900 dark:text-white font-bold">Shopiabd</span>
+                <span class="text-slate-900 dark:text-white font-bold">Shoukhin Fashion</span>
             </a>
             <button @click="mobileOpen = false" class="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

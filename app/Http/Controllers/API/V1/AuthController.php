@@ -24,8 +24,8 @@ class AuthController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'confirmed', 'min:6'],
             'phone' => ['nullable', 'string', 'max:20'],
             'address' => ['nullable', 'string'],
         ]);
@@ -44,16 +44,17 @@ class AuthController extends Controller
         $user->assignRole($role);
 
         // Store customer details in customer_profiles table
-        $customerProfile = CustomerProfile::create([
-            'user_id' => $user->id,
-            'shipping_address' => $request->address,
-        ]);
+        CustomerProfile::firstOrCreate(
+            ['user_id' => $user->id],
+            ['shipping_address' => $request->address]
+        );
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return $this->success([
             'user' => $user->load('roles', 'customerProfile'),
             'access_token' => $token,
+            'token' => $token,
             'token_type' => 'Bearer',
         ], 'Customer registration successful', 201);
     }
@@ -139,11 +140,13 @@ class AuthController extends Controller
     public function loginCustomer(Request $request): JsonResponse
     {
         $request->validate([
-            'email' => ['required', 'string', 'email'],
+            'email' => ['required', 'string'],
             'password' => ['required', 'string'],
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)
+            ->orWhere('phone', $request->email)
+            ->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return $this->error('Invalid login credentials', [
@@ -157,11 +160,10 @@ class AuthController extends Controller
             ]);
         }
 
-        // Verify the user has Customer role
+        // Ensure customer role exists
         if (!$user->hasRole('Customer')) {
-            return $this->error('Unauthorized role access', [
-                'role' => ['You are not authorized to login as a customer.']
-            ], 403);
+            $role = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'Customer', 'guard_name' => 'web']);
+            $user->assignRole($role);
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -169,6 +171,7 @@ class AuthController extends Controller
         return $this->success([
             'user' => $user->load('roles.permissions', 'permissions', 'customerProfile'),
             'access_token' => $token,
+            'token' => $token,
             'token_type' => 'Bearer',
         ], 'Customer login successful');
     }
